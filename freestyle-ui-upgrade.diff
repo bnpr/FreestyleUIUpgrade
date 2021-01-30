@@ -1,33 +1,8 @@
 diff --git a/release/scripts/startup/bl_ui/properties_freestyle.py b/release/scripts/startup/bl_ui/properties_freestyle.py
-index fd12747e2fa..b31088b23a5 100644
+index fd12747e2fa..bd95e739e7b 100644
 --- a/release/scripts/startup/bl_ui/properties_freestyle.py
 +++ b/release/scripts/startup/bl_ui/properties_freestyle.py
-@@ -1,861 +1,1325 @@
- # ##### BEGIN GPL LICENSE BLOCK #####
- #
- #  This program is free software; you can redistribute it and/or
- #  modify it under the terms of the GNU General Public License
- #  as published by the Free Software Foundation; either version 2
- #  of the License, or (at your option) any later version.
- #
- #  This program is distributed in the hope that it will be useful,
- #  but WITHOUT ANY WARRANTY; without even the implied warranty of
- #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- #  GNU General Public License for more details.
- #
- #  You should have received a copy of the GNU General Public License
- #  along with this program; if not, write to the Free Software Foundation,
- #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- #
- # ##### END GPL LICENSE BLOCK #####
- 
- # <pep8 compliant>
- import bpy
- from bpy.types import Menu, Panel, UIList
- 
- 
- # Render properties
- 
+@@ -26,7 +26,7 @@ from bpy.types import Menu, Panel, UIList
  class RenderFreestyleButtonsPanel:
      bl_space_type = 'PROPERTIES'
      bl_region_type = 'WINDOW'
@@ -36,10 +11,7 @@ index fd12747e2fa..b31088b23a5 100644
      # COMPAT_ENGINES must be defined in each subclass, external engines can add themselves here
  
      @classmethod
-     def poll(cls, context):
-         scene = context.scene
-         with_freestyle = bpy.app.build_options.freestyle
-         return scene and with_freestyle and (context.engine in cls.COMPAT_ENGINES)
+@@ -37,7 +37,8 @@ class RenderFreestyleButtonsPanel:
  
  
  class RENDER_PT_freestyle(RenderFreestyleButtonsPanel, Panel):
@@ -49,13 +21,7 @@ index fd12747e2fa..b31088b23a5 100644
      bl_options = {'DEFAULT_CLOSED'}
      bl_order = 10
      COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
- 
-     def draw_header(self, context):
-         rd = context.scene.render
-         self.layout.prop(rd, "use_freestyle", text="")
- 
-     def draw(self, context):
-         layout = self.layout
+@@ -51,11 +52,15 @@ class RENDER_PT_freestyle(RenderFreestyleButtonsPanel, Panel):
          layout.use_property_split = True
          layout.use_property_decorate = False  # No animation.
  
@@ -72,32 +38,7 @@ index fd12747e2fa..b31088b23a5 100644
  
          if rd.line_thickness_mode == 'ABSOLUTE':
              layout.prop(rd, "line_thickness")
- 
- 
- # Render layer properties
- 
- class ViewLayerFreestyleButtonsPanel:
-     bl_space_type = 'PROPERTIES'
-     bl_region_type = 'WINDOW'
-     bl_context = "view_layer"
-     bl_order = 10
-     # COMPAT_ENGINES must be defined in each subclass, external engines can add themselves here
- 
-     @classmethod
-     def poll(cls, context):
-         scene = context.scene
-         rd = scene.render
-         with_freestyle = bpy.app.build_options.freestyle
- 
-         return (scene and with_freestyle and rd.use_freestyle and
-                 (context.engine in cls.COMPAT_ENGINES))
- 
- 
- class ViewLayerFreestyleEditorButtonsPanel(ViewLayerFreestyleButtonsPanel):
-     # COMPAT_ENGINES must be defined in each subclass, external engines can add themselves here
- 
-     @classmethod
-     def poll(cls, context):
+@@ -88,14 +93,55 @@ class ViewLayerFreestyleEditorButtonsPanel(ViewLayerFreestyleButtonsPanel):
          if not super().poll(context):
              return False
          view_layer = context.view_layer
@@ -136,7 +77,7 @@ index fd12747e2fa..b31088b23a5 100644
 +        linestyle = lineset.linestyle
 +        if linestyle is None:
 +            return False
-+        
++
 +        return True
 +
 +
@@ -149,34 +90,13 @@ index fd12747e2fa..b31088b23a5 100644
      def draw_item(self, _context, layout, _data, item, icon, _active_data, _active_propname, index):
          lineset = item
          if self.layout_type in {'DEFAULT', 'COMPACT'}:
-             layout.prop(lineset, "name", text="", emboss=False, icon_value=icon)
+-            layout.prop(lineset, "name", text="", emboss=False, icon_value=icon)
++            layout.prop(lineset, "name", text="",
++                        emboss=False, icon_value=icon)
              layout.prop(lineset, "show_render", text="", index=index)
          elif self.layout_type == 'GRID':
              layout.alignment = 'CENTER'
-             layout.label(text="", icon_value=icon)
- 
- 
- class RENDER_MT_lineset_context_menu(Menu):
-     bl_label = "Lineset Specials"
- 
-     def draw(self, _context):
-         layout = self.layout
-         layout.operator("scene.freestyle_lineset_copy", icon='COPYDOWN')
-         layout.operator("scene.freestyle_lineset_paste", icon='PASTEDOWN')
- 
- 
- class VIEWLAYER_PT_freestyle(ViewLayerFreestyleButtonsPanel, Panel):
-     bl_label = "Freestyle"
-     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
- 
-     def draw_header(self, context):
-         view_layer = context.view_layer
-         rd = context.scene.render
- 
-         layout = self.layout
- 
-         layout.active = rd.use_freestyle
-         layout.prop(view_layer, "use_freestyle", text="")
+@@ -126,54 +172,61 @@ class VIEWLAYER_PT_freestyle(ViewLayerFreestyleButtonsPanel, Panel):
  
      def draw(self, context):
          layout = self.layout
@@ -200,7 +120,7 @@ index fd12747e2fa..b31088b23a5 100644
  
 -        split = layout.split()
 +        split = layout.split(factor=.4)
-+        split.alignment= 'RIGHT'
++        split.alignment = 'RIGHT'
 +        split.label(text="Edge Detection Options")
  
 -        col = split.column()
@@ -214,9 +134,9 @@ index fd12747e2fa..b31088b23a5 100644
 +
          if freestyle.mode == 'SCRIPT':
              col.prop(freestyle, "use_material_boundaries")
-+        
-+        col.prop(freestyle, "use_advanced_options")
  
++        col.prop(freestyle, "use_advanced_options")
++
          # Advanced options are hidden by default to warn new users
          if freestyle.use_advanced_options:
              if freestyle.mode == 'SCRIPT':
@@ -245,32 +165,22 @@ index fd12747e2fa..b31088b23a5 100644
                  row = box.row(align=True)
                  row.prop(module, "use", text="")
                  row.prop(module, "script", text="")
-                 row.operator("scene.freestyle_module_open", icon='FILEBROWSER', text="")
-                 row.operator("scene.freestyle_module_remove", icon='X', text="")
-                 row.operator("scene.freestyle_module_move", icon='TRIA_UP', text="").direction = 'UP'
-                 row.operator("scene.freestyle_module_move", icon='TRIA_DOWN', text="").direction = 'DOWN'
+-                row.operator("scene.freestyle_module_open", icon='FILEBROWSER', text="")
+-                row.operator("scene.freestyle_module_remove", icon='X', text="")
+-                row.operator("scene.freestyle_module_move", icon='TRIA_UP', text="").direction = 'UP'
+-                row.operator("scene.freestyle_module_move", icon='TRIA_DOWN', text="").direction = 'DOWN'
++                row.operator("scene.freestyle_module_open",
++                             icon='FILEBROWSER', text="")
++                row.operator("scene.freestyle_module_remove",
++                             icon='X', text="")
++                row.operator("scene.freestyle_module_move",
++                             icon='TRIA_UP', text="").direction = 'UP'
++                row.operator("scene.freestyle_module_move",
++                             icon='TRIA_DOWN', text="").direction = 'DOWN'
  
  
  class VIEWLAYER_PT_freestyle_lineset(ViewLayerFreestyleEditorButtonsPanel, Panel):
-     bl_label = "Freestyle Line Set"
-     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
- 
-     def draw_edge_type_buttons(self, box, lineset, edge_type):
-         # property names
-         select_edge_type = "select_" + edge_type
-         exclude_edge_type = "exclude_" + edge_type
-         # draw edge type buttons
-         row = box.row(align=True)
-         row.prop(lineset, select_edge_type)
-         sub = row.column(align=True)
-         sub.prop(lineset, exclude_edge_type, text="")
-         sub.active = getattr(lineset, select_edge_type)
- 
-     def draw(self, context):
-         layout = self.layout
- 
-         view_layer = context.view_layer
-         freestyle = view_layer.freestyle_settings
+@@ -199,7 +252,6 @@ class VIEWLAYER_PT_freestyle_lineset(ViewLayerFreestyleEditorButtonsPanel, Panel
          lineset = freestyle.linesets.active
  
          layout.active = view_layer.use_freestyle
@@ -278,24 +188,22 @@ index fd12747e2fa..b31088b23a5 100644
          row = layout.row()
          rows = 4 if lineset else 2
          row.template_list(
-             "VIEWLAYER_UL_linesets",
-             "",
-             freestyle,
-             "linesets",
-             freestyle.linesets,
-             "active_index",
-             rows=rows,
-         )
- 
+@@ -215,146 +267,559 @@ class VIEWLAYER_PT_freestyle_lineset(ViewLayerFreestyleEditorButtonsPanel, Panel
          sub = row.column(align=True)
          sub.operator("scene.freestyle_lineset_add", icon='ADD', text="")
          sub.operator("scene.freestyle_lineset_remove", icon='REMOVE', text="")
-         sub.menu("RENDER_MT_lineset_context_menu", icon='DOWNARROW_HLT', text="")
+-        sub.menu("RENDER_MT_lineset_context_menu", icon='DOWNARROW_HLT', text="")
++        sub.menu("RENDER_MT_lineset_context_menu",
++                 icon='DOWNARROW_HLT', text="")
          if lineset:
              sub.separator()
              sub.separator()
-             sub.operator("scene.freestyle_lineset_move", icon='TRIA_UP', text="").direction = 'UP'
-             sub.operator("scene.freestyle_lineset_move", icon='TRIA_DOWN', text="").direction = 'DOWN'
+-            sub.operator("scene.freestyle_lineset_move", icon='TRIA_UP', text="").direction = 'UP'
+-            sub.operator("scene.freestyle_lineset_move", icon='TRIA_DOWN', text="").direction = 'DOWN'
++            sub.operator("scene.freestyle_lineset_move",
++                         icon='TRIA_UP', text="").direction = 'UP'
++            sub.operator("scene.freestyle_lineset_move",
++                         icon='TRIA_DOWN', text="").direction = 'DOWN'
  
              col = layout.column()
              col.label(text="Selection By:")
@@ -357,7 +265,7 @@ index fd12747e2fa..b31088b23a5 100644
 +# Freestyle Lineset Sub Panels
 +class VIEWLAYER_PT_freestyle_lineset_visibilty(ViewLayerFreestyleLinesetSubPanel, Panel):
 +    bl_label = "Visibility"
-+    
++
 +    def draw_header(self, context):
 +        layout = self.layout
 +
@@ -366,7 +274,7 @@ index fd12747e2fa..b31088b23a5 100644
 +        lineset = freestyle.linesets.active
 +
 +        layout.prop(lineset, "select_by_visibility", text="")
-+    
++
 +    def draw(self, context):
 +        layout = self.layout
 +        layout.use_property_split = True
@@ -380,7 +288,7 @@ index fd12747e2fa..b31088b23a5 100644
 +        view_layer = context.view_layer
 +        freestyle = view_layer.freestyle_settings
 +        lineset = freestyle.linesets.active
-+        
++
 +        layout.active = lineset.select_by_visibility
 +
 +        split = layout.split(factor=.4)
@@ -390,13 +298,14 @@ index fd12747e2fa..b31088b23a5 100644
 +        col = split.column(align=True)
 +        col.use_property_split = False
 +        col.prop(lineset, "visibility", text="Type", expand=True)
-+        
++
 +        if lineset.visibility == 'RANGE':
 +            split = layout.split(factor=.4)
 +            split.alignment = "RIGHT"
 +            split.label(text="QI Range")
-+            
-+            flow = split.column(align=True) if is_narrow else split.row(align=True)
++
++            flow = split.column(
++                align=True) if is_narrow else split.row(align=True)
 +            flow.use_property_split = False
 +            flow.prop(lineset, "qi_start")
 +            flow.prop(lineset, "qi_end")
@@ -413,7 +322,7 @@ index fd12747e2fa..b31088b23a5 100644
 +        lineset = freestyle.linesets.active
 +
 +        layout.prop(lineset, "select_by_edge_types", text="")
-+    
++
 +    def draw_edge_type_buttons(self, box, lineset, edge_type):
 +        # property names
 +        select_edge_type = "select_" + edge_type
@@ -439,25 +348,26 @@ index fd12747e2fa..b31088b23a5 100644
 +
 +        if lineset is None:
 +            return False
-+        
++
 +        layout.active = lineset.select_by_edge_types
 +
 +        flow = layout.column() if is_narrow else layout.row()
 +        flow.prop(lineset, "edge_type_negation", expand=True, text="Negation")
-+        
++
 +        flow = layout.column() if is_narrow else layout.row()
-+        flow.prop(lineset, "edge_type_combination", expand=True, text="Combination")
++        flow.prop(lineset, "edge_type_combination",
++                  expand=True, text="Combination")
 +
 +        col = layout.column(heading="Types")
 +        self.draw_edge_type_buttons(col, lineset, "silhouette")
-+        self.draw_edge_type_buttons(col, lineset, "border")
-+        self.draw_edge_type_buttons(col, lineset, "contour")
-+        self.draw_edge_type_buttons(col, lineset, "suggestive_contour")
-+        self.draw_edge_type_buttons(col, lineset, "ridge_valley")
 +        self.draw_edge_type_buttons(col, lineset, "crease")
++        self.draw_edge_type_buttons(col, lineset, "border")
 +        self.draw_edge_type_buttons(col, lineset, "edge_mark")
++        self.draw_edge_type_buttons(col, lineset, "contour")
 +        self.draw_edge_type_buttons(col, lineset, "external_contour")
 +        self.draw_edge_type_buttons(col, lineset, "material_boundary")
++        self.draw_edge_type_buttons(col, lineset, "suggestive_contour")
++        self.draw_edge_type_buttons(col, lineset, "ridge_valley")
 +
 +
 +class VIEWLAYER_PT_freestyle_lineset_facemarks(ViewLayerFreestyleLinesetSubPanel, Panel):
@@ -472,7 +382,7 @@ index fd12747e2fa..b31088b23a5 100644
 +        lineset = freestyle.linesets.active
 +
 +        layout.prop(lineset, "select_by_face_marks", text="")
-+    
++
 +    def draw(self, context):
 +        layout = self.layout
 +        layout.use_property_split = True
@@ -487,14 +397,15 @@ index fd12747e2fa..b31088b23a5 100644
 +
 +        if lineset is None:
 +            return False
-+        
++
 +        layout.active = lineset.select_by_face_marks
 +
 +        flow = layout.column() if is_narrow else layout.row()
 +        flow.prop(lineset, "face_mark_negation", expand=True, text="Negation")
 +
 +        flow = layout.column() if is_narrow else layout.row()
-+        flow.prop(lineset, "face_mark_condition", expand=True, text="Condition")
++        flow.prop(lineset, "face_mark_condition",
++                  expand=True, text="Condition")
 +
 +
 +class VIEWLAYER_PT_freestyle_lineset_collection(ViewLayerFreestyleLinesetSubPanel, Panel):
@@ -509,7 +420,7 @@ index fd12747e2fa..b31088b23a5 100644
 +        lineset = freestyle.linesets.active
 +
 +        layout.prop(lineset, "select_by_collection", text="")
-+    
++
 +    def draw(self, context):
 +        layout = self.layout
 +        layout.use_property_split = True
@@ -524,7 +435,7 @@ index fd12747e2fa..b31088b23a5 100644
 +
 +        if lineset is None:
 +            return False
-+        
++
 +        layout.active = lineset.select_by_collection
 +
 +        layout.row().prop(lineset, "collection", text="Freestyle Lineset Collection")
@@ -535,6 +446,7 @@ index fd12747e2fa..b31088b23a5 100644
 +# Linestyle Modifier Drawing code
 +def draw_modifier_box_header(box, modifier):
 +    row = box.row()
++    row.use_property_split = False
 +    row.context_pointer_set("modifier", modifier)
 +    if modifier.expanded:
 +        icon = 'TRIA_DOWN'
@@ -551,18 +463,23 @@ index fd12747e2fa..b31088b23a5 100644
 +    row.prop(modifier, "use", text="", icon=icon)
 +    sub = row.row(align=True)
 +    sub.operator("scene.freestyle_modifier_copy", icon='NONE', text="Copy")
-+    sub.operator("scene.freestyle_modifier_move", icon='TRIA_UP', text="").direction = 'UP'
-+    sub.operator("scene.freestyle_modifier_move", icon='TRIA_DOWN', text="").direction = 'DOWN'
++    sub.operator("scene.freestyle_modifier_move",
++                 icon='TRIA_UP', text="").direction = 'UP'
++    sub.operator("scene.freestyle_modifier_move",
++                 icon='TRIA_DOWN', text="").direction = 'DOWN'
 +    sub.operator("scene.freestyle_modifier_remove", icon='X', text="")
++
 +
 +def draw_modifier_box_error(box, _modifier, message):
 +    row = box.row()
 +    row.label(text=message, icon='ERROR')
 +
++
 +def draw_modifier_common(box, modifier):
 +    row = box.row()
 +    row.prop(modifier, "blend", text="")
 +    row.prop(modifier, "influence")
++
 +
 +def draw_modifier_color_ramp_common(box, modifier, has_range):
 +    box.template_color_ramp(modifier, "color_ramp", expand=True)
@@ -570,6 +487,7 @@ index fd12747e2fa..b31088b23a5 100644
 +        row = box.row(align=True)
 +        row.prop(modifier, "range_min")
 +        row.prop(modifier, "range_max")
++
 +
 +def draw_modifier_curve_common(box, modifier, has_range, has_value):
 +    row = box.row()
@@ -606,7 +524,8 @@ index fd12747e2fa..b31088b23a5 100644
 +            return
 +        linestyle = lineset.linestyle
 +
-+        layout.template_ID(lineset, "linestyle", new="scene.freestyle_linestyle_new")
++        layout.template_ID(lineset, "linestyle",
++                           new="scene.freestyle_linestyle_new")
 +        if linestyle is None:
 +            return
 +        row = layout.row(align=True)
@@ -688,7 +607,7 @@ index fd12747e2fa..b31088b23a5 100644
 +
 +        if linestyle is None:
 +            return
-+        
++
 +        row = layout.row(align=True)
 +        row.alignment = "LEFT"
 +        row.label(text=lineset.name, icon="LINE_DATA")
@@ -701,7 +620,7 @@ index fd12747e2fa..b31088b23a5 100644
 +
 +class VIEWLAYER_PT_freestyle_linestyle_strokes_chaining(ViewLayerFreestyleLinestyleStrokesSubPanel, Panel):
 +    bl_label = "Chaining"
-+    
++
 +    def draw_header(self, context):
 +        layout = self.layout
 +
@@ -815,7 +734,7 @@ index fd12747e2fa..b31088b23a5 100644
 +
 +        linestyle = lineset.linestyle
 +        layout.prop(linestyle, "use_sorting", text="")
-+    
++
 +    def draw(self, context):
 +        layout = self.layout
 +        layout.use_property_split = True
@@ -829,7 +748,7 @@ index fd12747e2fa..b31088b23a5 100644
 +        lineset = freestyle.linesets.active
 +
 +        linestyle = lineset.linestyle
-+        
++
 +        layout.active = linestyle.use_sorting
 +
 +        layout.prop(linestyle, "sort_key")
@@ -942,16 +861,7 @@ index fd12747e2fa..b31088b23a5 100644
                  prop = box.operator("scene.freestyle_fill_range_by_selection")
                  prop.type = 'COLOR'
                  prop.name = modifier.name
- 
-             elif modifier.type == 'MATERIAL':
-                 row = box.row()
-                 row.prop(modifier, "material_attribute", text="")
-                 sub = row.column()
-                 sub.prop(modifier, "use_ramp")
-                 if modifier.material_attribute in {'LINE', 'DIFF', 'SPEC'}:
-                     sub.active = True
-                     show_ramp = modifier.use_ramp
-                 else:
+@@ -371,117 +836,191 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
                      sub.active = False
                      show_ramp = True
                  if show_ramp:
@@ -1016,7 +926,8 @@ index fd12747e2fa..b31088b23a5 100644
 +        row = col.row()
 +        row.prop(linestyle, "color", text="Base Color")
 +        col.label(text="Modifiers:")
-+        col.operator_menu_enum("scene.freestyle_color_modifier_add", "type", text="Add Modifier")
++        col.operator_menu_enum(
++            "scene.freestyle_color_modifier_add", "type", text="Add Modifier")
 +        for modifier in linestyle.color_modifiers:
 +            self.draw_color_modifier(context, modifier)
 +
@@ -1118,7 +1029,8 @@ index fd12747e2fa..b31088b23a5 100644
 +        row = col.row()
 +        row.prop(linestyle, "alpha", text="Base Transparency")
 +        col.label(text="Modifiers:")
-+        col.operator_menu_enum("scene.freestyle_alpha_modifier_add", "type", text="Add Modifier")
++        col.operator_menu_enum(
++            "scene.freestyle_alpha_modifier_add", "type", text="Add Modifier")
 +        for modifier in linestyle.alpha_modifiers:
 +            self.draw_alpha_modifier(context, modifier)
 +
@@ -1164,8 +1076,7 @@ index fd12747e2fa..b31088b23a5 100644
  
              elif modifier.type == 'CALLIGRAPHY':
                  box.prop(modifier, "orientation")
-                 row = box.row(align=True)
-                 row.prop(modifier, "thickness_min")
+@@ -490,7 +1029,7 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
                  row.prop(modifier, "thickness_max")
  
              elif modifier.type == 'TANGENT':
@@ -1174,14 +1085,7 @@ index fd12747e2fa..b31088b23a5 100644
                  self.mapping = 'CURVE'
                  row = box.row(align=True)
                  row.prop(modifier, "thickness_min")
-                 row.prop(modifier, "thickness_max")
- 
-             elif modifier.type == 'NOISE':
-                 row = box.row(align=False)
-                 row.prop(modifier, "amplitude")
-                 row.prop(modifier, "period")
-                 row = box.row(align=False)
-                 row.prop(modifier, "seed")
+@@ -505,7 +1044,7 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
                  row.prop(modifier, "use_asymmetric")
  
              elif modifier.type == 'CREASE_ANGLE':
@@ -1190,8 +1094,7 @@ index fd12747e2fa..b31088b23a5 100644
                  row = box.row(align=True)
                  row.prop(modifier, "thickness_min")
                  row.prop(modifier, "thickness_max")
-                 row = box.row(align=True)
-                 row.prop(modifier, "angle_min")
+@@ -514,7 +1053,7 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
                  row.prop(modifier, "angle_max")
  
              elif modifier.type == 'CURVATURE_3D':
@@ -1200,9 +1103,7 @@ index fd12747e2fa..b31088b23a5 100644
                  row = box.row(align=True)
                  row.prop(modifier, "thickness_min")
                  row.prop(modifier, "thickness_max")
-                 row = box.row(align=True)
-                 row.prop(modifier, "curvature_min")
-                 row.prop(modifier, "curvature_max")
+@@ -524,13 +1063,60 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
                  freestyle = context.view_layer.freestyle_settings
                  if not freestyle.use_smoothness:
                      message = "Enable Face Smoothness to use this modifier"
@@ -1246,7 +1147,8 @@ index fd12747e2fa..b31088b23a5 100644
 +
 +        col = layout.column()
 +        col.label(text="Modifiers:")
-+        col.operator_menu_enum("scene.freestyle_thickness_modifier_add", "type", text="Add Modifier")
++        col.operator_menu_enum(
++            "scene.freestyle_thickness_modifier_add", "type", text="Add Modifier")
 +        for modifier in linestyle.thickness_modifiers:
 +            self.draw_thickness_modifier(context, modifier)
 +
@@ -1264,97 +1166,7 @@ index fd12747e2fa..b31088b23a5 100644
          if modifier.expanded:
              box = col.box()
  
-             if modifier.type == 'SAMPLING':
-                 box.prop(modifier, "sampling")
- 
-             elif modifier.type == 'BEZIER_CURVE':
-                 box.prop(modifier, "error")
- 
-             elif modifier.type == 'SINUS_DISPLACEMENT':
-                 split = box.split()
-                 col = split.column()
-                 col.prop(modifier, "wavelength")
-                 col.prop(modifier, "amplitude")
-                 col = split.column()
-                 col.prop(modifier, "phase")
- 
-             elif modifier.type == 'SPATIAL_NOISE':
-                 split = box.split()
-                 col = split.column()
-                 col.prop(modifier, "amplitude")
-                 col.prop(modifier, "scale")
-                 col.prop(modifier, "octaves")
-                 col = split.column()
-                 col.prop(modifier, "smooth")
-                 col.prop(modifier, "use_pure_random")
- 
-             elif modifier.type == 'PERLIN_NOISE_1D':
-                 split = box.split()
-                 col = split.column()
-                 col.prop(modifier, "frequency")
-                 col.prop(modifier, "amplitude")
-                 col.prop(modifier, "seed")
-                 col = split.column()
-                 col.prop(modifier, "octaves")
-                 col.prop(modifier, "angle")
- 
-             elif modifier.type == 'PERLIN_NOISE_2D':
-                 split = box.split()
-                 col = split.column()
-                 col.prop(modifier, "frequency")
-                 col.prop(modifier, "amplitude")
-                 col.prop(modifier, "seed")
-                 col = split.column()
-                 col.prop(modifier, "octaves")
-                 col.prop(modifier, "angle")
- 
-             elif modifier.type == 'BACKBONE_STRETCHER':
-                 box.prop(modifier, "backbone_length")
- 
-             elif modifier.type == 'TIP_REMOVER':
-                 box.prop(modifier, "tip_length")
- 
-             elif modifier.type == 'POLYGONIZATION':
-                 box.prop(modifier, "error")
- 
-             elif modifier.type == 'GUIDING_LINES':
-                 box.prop(modifier, "offset")
- 
-             elif modifier.type == 'BLUEPRINT':
-                 row = box.row()
-                 row.prop(modifier, "shape", expand=True)
-                 box.prop(modifier, "rounds")
-                 row = box.row()
-                 if modifier.shape in {'CIRCLES', 'ELLIPSES'}:
-                     row.prop(modifier, "random_radius")
-                     row.prop(modifier, "random_center")
-                 elif modifier.shape == 'SQUARES':
-                     row.prop(modifier, "backbone_length")
-                     row.prop(modifier, "random_backbone")
- 
-             elif modifier.type == '2D_OFFSET':
-                 row = box.row(align=True)
-                 row.prop(modifier, "start")
-                 row.prop(modifier, "end")
-                 row = box.row(align=True)
-                 row.prop(modifier, "x")
-                 row.prop(modifier, "y")
- 
-             elif modifier.type == '2D_TRANSFORM':
-                 box.prop(modifier, "pivot")
-                 if modifier.pivot == 'PARAM':
-                     box.prop(modifier, "pivot_u")
-                 elif modifier.pivot == 'ABSOLUTE':
-                     row = box.row(align=True)
-                     row.prop(modifier, "pivot_x")
-                     row.prop(modifier, "pivot_y")
-                 row = box.row(align=True)
-                 row.prop(modifier, "scale_x")
-                 row.prop(modifier, "scale_y")
-                 box.prop(modifier, "angle")
- 
-             elif modifier.type == 'SIMPLIFICATION':
-                 box.prop(modifier, "tolerance")
+@@ -628,6 +1214,8 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
  
      def draw(self, context):
          layout = self.layout
@@ -1363,10 +1175,7 @@ index fd12747e2fa..b31088b23a5 100644
  
          view_layer = context.view_layer
          lineset = view_layer.freestyle_settings.linesets.active
- 
-         layout.active = view_layer.use_freestyle
- 
-         if lineset is None:
+@@ -638,177 +1226,60 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
              return
          linestyle = lineset.linestyle
  
@@ -1523,7 +1332,8 @@ index fd12747e2fa..b31088b23a5 100644
 -                self.draw_thickness_modifier(context, modifier)
 +        col = layout.column()
 +        col.label(text="Modifiers:")
-+        col.operator_menu_enum("scene.freestyle_geometry_modifier_add", "type", text="Add Modifier")
++        col.operator_menu_enum(
++            "scene.freestyle_geometry_modifier_add", "type", text="Add Modifier")
 +        for modifier in linestyle.geometry_modifiers:
 +            self.draw_geometry_modifier(context, modifier)
  
@@ -1547,9 +1357,6 @@ index fd12747e2fa..b31088b23a5 100644
 +        layout = self.layout
 +        layout.use_property_split = True
 +        layout.use_property_decorate = False
-+
-+        view_layer = context.view_layer
-+        lineset = view_layer.freestyle_settings.linesets.active
  
 -            row = layout.row()
 -            props = row.operator(
@@ -1558,10 +1365,13 @@ index fd12747e2fa..b31088b23a5 100644
 -                icon='TEXTURE',
 -            )
 -            props.context = 'TEXTURE'
-+        layout.active = view_layer.use_freestyle
++        view_layer = context.view_layer
++        lineset = view_layer.freestyle_settings.linesets.active
  
 -        elif linestyle.panel == 'MISC':
 -            pass
++        layout.active = view_layer.use_freestyle
++
 +        if lineset is None:
 +            return
 +        linestyle = lineset.linestyle
@@ -1588,42 +1398,7 @@ index fd12747e2fa..b31088b23a5 100644
  
  
  # Material properties
- 
- class MaterialFreestyleButtonsPanel:
-     bl_space_type = 'PROPERTIES'
-     bl_region_type = 'WINDOW'
-     bl_context = "material"
-     # COMPAT_ENGINES must be defined in each subclass, external engines can add themselves here
- 
-     @classmethod
-     def poll(cls, context):
-         scene = context.scene
-         material = context.material
-         with_freestyle = bpy.app.build_options.freestyle
-         return (
-             with_freestyle and material and scene and scene.render.use_freestyle and
-             (context.engine in cls.COMPAT_ENGINES)
-         )
- 
- 
- class MATERIAL_PT_freestyle_line(MaterialFreestyleButtonsPanel, Panel):
-     bl_label = "Freestyle Line"
-     bl_options = {'DEFAULT_CLOSED'}
-     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
- 
-     def draw(self, context):
-         layout = self.layout
- 
-         mat = context.material
- 
-         row = layout.row()
-         row.prop(mat, "line_color", text="")
-         row.prop(mat, "line_priority", text="Priority")
- 
- 
- classes = (
-     RENDER_PT_freestyle,
-     VIEWLAYER_UL_linesets,
+@@ -851,7 +1322,23 @@ classes = (
      RENDER_MT_lineset_context_menu,
      VIEWLAYER_PT_freestyle,
      VIEWLAYER_PT_freestyle_lineset,
@@ -1647,1012 +1422,11 @@ index fd12747e2fa..b31088b23a5 100644
      MATERIAL_PT_freestyle_line,
  )
  
- if __name__ == "__main__":  # only for live edit.
-     from bpy.utils import register_class
-     for cls in classes:
-         register_class(cls)
 diff --git a/source/blender/makesrna/intern/rna_scene.c b/source/blender/makesrna/intern/rna_scene.c
 index af31f16f4e0..9f32393eb05 100644
 --- a/source/blender/makesrna/intern/rna_scene.c
 +++ b/source/blender/makesrna/intern/rna_scene.c
-@@ -3727,2001 +3727,2001 @@ static void rna_def_unified_paint_settings(BlenderRNA *brna)
-   RNA_def_property_range(prop, 0.0, 1.0);
-   RNA_def_property_float_sdna(prop, NULL, "rgb");
-   RNA_def_property_ui_text(prop, "Color", "");
-   RNA_def_property_update(prop, 0, "rna_UnifiedPaintSettings_update");
- 
-   prop = RNA_def_property(srna, "secondary_color", PROP_FLOAT, PROP_COLOR_GAMMA);
-   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
-   RNA_def_property_range(prop, 0.0, 1.0);
-   RNA_def_property_float_sdna(prop, NULL, "secondary_rgb");
-   RNA_def_property_ui_text(prop, "Secondary Color", "");
-   RNA_def_property_update(prop, 0, "rna_UnifiedPaintSettings_update");
- 
-   prop = RNA_def_property(srna, "use_locked_size", PROP_ENUM, PROP_NONE); /* as an enum */
-   RNA_def_property_enum_bitflag_sdna(prop, NULL, "flag");
-   RNA_def_property_enum_items(prop, brush_size_unit_items);
-   RNA_def_property_ui_text(
-       prop, "Radius Unit", "Measure brush size relative to the view or the scene");
- }
- 
- static void rna_def_curve_paint_settings(BlenderRNA *brna)
- {
-   StructRNA *srna;
-   PropertyRNA *prop;
- 
-   srna = RNA_def_struct(brna, "CurvePaintSettings", NULL);
-   RNA_def_struct_path_func(srna, "rna_CurvePaintSettings_path");
-   RNA_def_struct_ui_text(srna, "Curve Paint Settings", "");
- 
-   static const EnumPropertyItem curve_type_items[] = {
-       {CU_POLY, "POLY", 0, "Poly", ""},
-       {CU_BEZIER, "BEZIER", 0, "Bezier", ""},
-       {0, NULL, 0, NULL, NULL},
-   };
- 
-   prop = RNA_def_property(srna, "curve_type", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_sdna(prop, NULL, "curve_type");
-   RNA_def_property_enum_items(prop, curve_type_items);
-   RNA_def_property_ui_text(prop, "Type", "Type of curve to use for new strokes");
- 
-   prop = RNA_def_property(srna, "use_corners_detect", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "flag", CURVE_PAINT_FLAG_CORNERS_DETECT);
-   RNA_def_property_ui_text(prop, "Detect Corners", "Detect corners and use non-aligned handles");
- 
-   prop = RNA_def_property(srna, "use_pressure_radius", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "flag", CURVE_PAINT_FLAG_PRESSURE_RADIUS);
-   RNA_def_property_ui_icon(prop, ICON_STYLUS_PRESSURE, 0);
-   RNA_def_property_ui_text(prop, "Use Pressure", "Map tablet pressure to curve radius");
- 
-   prop = RNA_def_property(srna, "use_stroke_endpoints", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "flag", CURVE_PAINT_FLAG_DEPTH_STROKE_ENDPOINTS);
-   RNA_def_property_ui_text(prop, "Only First", "Use the start of the stroke for the depth");
- 
-   prop = RNA_def_property(srna, "use_offset_absolute", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "flag", CURVE_PAINT_FLAG_DEPTH_STROKE_OFFSET_ABS);
-   RNA_def_property_ui_text(
-       prop, "Absolute Offset", "Apply a fixed offset (don't scale by the radius)");
- 
-   prop = RNA_def_property(srna, "error_threshold", PROP_INT, PROP_PIXEL);
-   RNA_def_property_range(prop, 1, 100);
-   RNA_def_property_ui_text(prop, "Tolerance", "Allow deviation for a smoother, less precise line");
- 
-   prop = RNA_def_property(srna, "fit_method", PROP_ENUM, PROP_PIXEL);
-   RNA_def_property_enum_sdna(prop, NULL, "fit_method");
-   RNA_def_property_enum_items(prop, rna_enum_curve_fit_method_items);
-   RNA_def_property_ui_text(prop, "Method", "Curve fitting method");
- 
-   prop = RNA_def_property(srna, "corner_angle", PROP_FLOAT, PROP_ANGLE);
-   RNA_def_property_range(prop, 0, M_PI);
-   RNA_def_property_ui_text(prop, "Corner Angle", "Angles above this are considered corners");
- 
-   prop = RNA_def_property(srna, "radius_min", PROP_FLOAT, PROP_NONE);
-   RNA_def_property_range(prop, 0.0, 100.0);
-   RNA_def_property_ui_range(prop, 0.0f, 10.0, 10, 2);
-   RNA_def_property_ui_text(
-       prop,
-       "Radius Min",
-       "Minimum radius when the minimum pressure is applied (also the minimum when tapering)");
- 
-   prop = RNA_def_property(srna, "radius_max", PROP_FLOAT, PROP_NONE);
-   RNA_def_property_range(prop, 0.0, 100.0);
-   RNA_def_property_ui_range(prop, 0.0f, 10.0, 10, 2);
-   RNA_def_property_ui_text(
-       prop,
-       "Radius Max",
-       "Radius to use when the maximum pressure is applied (or when a tablet isn't used)");
- 
-   prop = RNA_def_property(srna, "radius_taper_start", PROP_FLOAT, PROP_NONE);
-   RNA_def_property_range(prop, 0.0, 1.0);
-   RNA_def_property_ui_range(prop, 0.0f, 1.0, 1, 2);
-   RNA_def_property_ui_text(
-       prop, "Radius Min", "Taper factor for the radius of each point along the curve");
- 
-   prop = RNA_def_property(srna, "radius_taper_end", PROP_FLOAT, PROP_NONE);
-   RNA_def_property_range(prop, 0.0, 10.0);
-   RNA_def_property_ui_range(prop, 0.0f, 1.0, 1, 2);
-   RNA_def_property_ui_text(
-       prop, "Radius Max", "Taper factor for the radius of each point along the curve");
- 
-   prop = RNA_def_property(srna, "surface_offset", PROP_FLOAT, PROP_NONE);
-   RNA_def_property_range(prop, -10.0, 10.0);
-   RNA_def_property_ui_range(prop, -1.0f, 1.0, 1, 2);
-   RNA_def_property_ui_text(prop, "Offset", "Offset the stroke from the surface");
- 
-   static const EnumPropertyItem depth_mode_items[] = {
-       {CURVE_PAINT_PROJECT_CURSOR, "CURSOR", 0, "Cursor", ""},
-       {CURVE_PAINT_PROJECT_SURFACE, "SURFACE", 0, "Surface", ""},
-       {0, NULL, 0, NULL, NULL},
-   };
- 
-   prop = RNA_def_property(srna, "depth_mode", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_sdna(prop, NULL, "depth_mode");
-   RNA_def_property_enum_items(prop, depth_mode_items);
-   RNA_def_property_ui_text(prop, "Depth", "Method of projecting depth");
- 
-   static const EnumPropertyItem surface_plane_items[] = {
-       {CURVE_PAINT_SURFACE_PLANE_NORMAL_VIEW,
-        "NORMAL_VIEW",
-        0,
-        "Normal/View",
-        "Display perpendicular to the surface"},
-       {CURVE_PAINT_SURFACE_PLANE_NORMAL_SURFACE,
-        "NORMAL_SURFACE",
-        0,
-        "Normal/Surface",
-        "Display aligned to the surface"},
-       {CURVE_PAINT_SURFACE_PLANE_VIEW, "VIEW", 0, "View", "Display aligned to the viewport"},
-       {0, NULL, 0, NULL, NULL},
-   };
- 
-   prop = RNA_def_property(srna, "surface_plane", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_sdna(prop, NULL, "surface_plane");
-   RNA_def_property_enum_items(prop, surface_plane_items);
-   RNA_def_property_ui_text(prop, "Plane", "Plane for projected stroke");
- }
- 
- static void rna_def_statvis(BlenderRNA *brna)
- {
-   StructRNA *srna;
-   PropertyRNA *prop;
- 
-   static const EnumPropertyItem stat_type[] = {
-       {SCE_STATVIS_OVERHANG, "OVERHANG", 0, "Overhang", ""},
-       {SCE_STATVIS_THICKNESS, "THICKNESS", 0, "Thickness", ""},
-       {SCE_STATVIS_INTERSECT, "INTERSECT", 0, "Intersect", ""},
-       {SCE_STATVIS_DISTORT, "DISTORT", 0, "Distortion", ""},
-       {SCE_STATVIS_SHARP, "SHARP", 0, "Sharp", ""},
-       {0, NULL, 0, NULL, NULL},
-   };
- 
-   srna = RNA_def_struct(brna, "MeshStatVis", NULL);
-   RNA_def_struct_path_func(srna, "rna_MeshStatVis_path");
-   RNA_def_struct_ui_text(srna, "Mesh Visualize Statistics", "");
- 
-   prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_items(prop, stat_type);
-   RNA_def_property_ui_text(prop, "Type", "Type of data to visualize/check");
-   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
-   RNA_def_property_update(prop, 0, "rna_EditMesh_update");
- 
-   /* overhang */
-   prop = RNA_def_property(srna, "overhang_min", PROP_FLOAT, PROP_ANGLE);
-   RNA_def_property_float_sdna(prop, NULL, "overhang_min");
-   RNA_def_property_range(prop, 0.0f, DEG2RADF(180.0f));
-   RNA_def_property_ui_range(prop, 0.0f, DEG2RADF(180.0f), 10, 3);
-   RNA_def_property_ui_text(prop, "Overhang Min", "Minimum angle to display");
-   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
-   RNA_def_property_update(prop, 0, "rna_EditMesh_update");
- 
-   prop = RNA_def_property(srna, "overhang_max", PROP_FLOAT, PROP_ANGLE);
-   RNA_def_property_float_sdna(prop, NULL, "overhang_max");
-   RNA_def_property_range(prop, 0.0f, DEG2RADF(180.0f));
-   RNA_def_property_ui_range(prop, 0.0f, DEG2RADF(180.0f), 10, 3);
-   RNA_def_property_ui_text(prop, "Overhang Max", "Maximum angle to display");
-   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
-   RNA_def_property_update(prop, 0, "rna_EditMesh_update");
- 
-   prop = RNA_def_property(srna, "overhang_axis", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_sdna(prop, NULL, "overhang_axis");
-   RNA_def_property_enum_items(prop, rna_enum_object_axis_items);
-   RNA_def_property_ui_text(prop, "Axis", "");
-   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
-   RNA_def_property_update(prop, 0, "rna_EditMesh_update");
- 
-   /* thickness */
-   prop = RNA_def_property(srna, "thickness_min", PROP_FLOAT, PROP_DISTANCE);
-   RNA_def_property_float_sdna(prop, NULL, "thickness_min");
-   RNA_def_property_range(prop, 0.0f, 1000.0);
-   RNA_def_property_ui_range(prop, 0.0f, 100.0, 0.001, 3);
-   RNA_def_property_ui_text(prop, "Thickness Min", "Minimum for measuring thickness");
-   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
-   RNA_def_property_update(prop, 0, "rna_EditMesh_update");
- 
-   prop = RNA_def_property(srna, "thickness_max", PROP_FLOAT, PROP_DISTANCE);
-   RNA_def_property_float_sdna(prop, NULL, "thickness_max");
-   RNA_def_property_range(prop, 0.0f, 1000.0);
-   RNA_def_property_ui_range(prop, 0.0f, 100.0, 0.001, 3);
-   RNA_def_property_ui_text(prop, "Thickness Max", "Maximum for measuring thickness");
-   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
-   RNA_def_property_update(prop, 0, "rna_EditMesh_update");
- 
-   prop = RNA_def_property(srna, "thickness_samples", PROP_INT, PROP_UNSIGNED);
-   RNA_def_property_int_sdna(prop, NULL, "thickness_samples");
-   RNA_def_property_range(prop, 1, 32);
-   RNA_def_property_ui_text(prop, "Samples", "Number of samples to test per face");
-   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
-   RNA_def_property_update(prop, 0, "rna_EditMesh_update");
- 
-   /* distort */
-   prop = RNA_def_property(srna, "distort_min", PROP_FLOAT, PROP_ANGLE);
-   RNA_def_property_float_sdna(prop, NULL, "distort_min");
-   RNA_def_property_range(prop, 0.0f, DEG2RADF(180.0f));
-   RNA_def_property_ui_range(prop, 0.0f, DEG2RADF(180.0f), 10, 3);
-   RNA_def_property_ui_text(prop, "Distort Min", "Minimum angle to display");
-   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
-   RNA_def_property_update(prop, 0, "rna_EditMesh_update");
- 
-   prop = RNA_def_property(srna, "distort_max", PROP_FLOAT, PROP_ANGLE);
-   RNA_def_property_float_sdna(prop, NULL, "distort_max");
-   RNA_def_property_range(prop, 0.0f, DEG2RADF(180.0f));
-   RNA_def_property_ui_range(prop, 0.0f, DEG2RADF(180.0f), 10, 3);
-   RNA_def_property_ui_text(prop, "Distort Max", "Maximum angle to display");
-   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
-   RNA_def_property_update(prop, 0, "rna_EditMesh_update");
- 
-   /* sharp */
-   prop = RNA_def_property(srna, "sharp_min", PROP_FLOAT, PROP_ANGLE);
-   RNA_def_property_float_sdna(prop, NULL, "sharp_min");
-   RNA_def_property_range(prop, -DEG2RADF(180.0f), DEG2RADF(180.0f));
-   RNA_def_property_ui_range(prop, -DEG2RADF(180.0f), DEG2RADF(180.0f), 10, 3);
-   RNA_def_property_ui_text(prop, "Distort Min", "Minimum angle to display");
-   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
-   RNA_def_property_update(prop, 0, "rna_EditMesh_update");
- 
-   prop = RNA_def_property(srna, "sharp_max", PROP_FLOAT, PROP_ANGLE);
-   RNA_def_property_float_sdna(prop, NULL, "sharp_max");
-   RNA_def_property_range(prop, -DEG2RADF(180.0f), DEG2RADF(180.0f));
-   RNA_def_property_ui_range(prop, -DEG2RADF(180.0f), DEG2RADF(180.0f), 10, 3);
-   RNA_def_property_ui_text(prop, "Distort Max", "Maximum angle to display");
-   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
-   RNA_def_property_update(prop, 0, "rna_EditMesh_update");
- }
- 
- static void rna_def_unit_settings(BlenderRNA *brna)
- {
-   StructRNA *srna;
-   PropertyRNA *prop;
- 
-   static const EnumPropertyItem unit_systems[] = {
-       {USER_UNIT_NONE, "NONE", 0, "None", ""},
-       {USER_UNIT_METRIC, "METRIC", 0, "Metric", ""},
-       {USER_UNIT_IMPERIAL, "IMPERIAL", 0, "Imperial", ""},
-       {0, NULL, 0, NULL, NULL},
-   };
- 
-   static const EnumPropertyItem rotation_units[] = {
-       {0, "DEGREES", 0, "Degrees", "Use degrees for measuring angles and rotations"},
-       {USER_UNIT_ROT_RADIANS, "RADIANS", 0, "Radians", ""},
-       {0, NULL, 0, NULL, NULL},
-   };
- 
-   srna = RNA_def_struct(brna, "UnitSettings", NULL);
-   RNA_def_struct_ui_text(srna, "Unit Settings", "");
-   RNA_def_struct_nested(brna, srna, "Scene");
-   RNA_def_struct_path_func(srna, "rna_UnitSettings_path");
- 
-   /* Units */
-   prop = RNA_def_property(srna, "system", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_items(prop, unit_systems);
-   RNA_def_property_ui_text(
-       prop, "Unit System", "The unit system to use for user interface controls");
-   RNA_def_property_update(prop, NC_WINDOW, "rna_UnitSettings_system_update");
- 
-   prop = RNA_def_property(srna, "system_rotation", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_items(prop, rotation_units);
-   RNA_def_property_ui_text(
-       prop, "Rotation Units", "Unit to use for displaying/editing rotation values");
-   RNA_def_property_update(prop, NC_WINDOW, NULL);
- 
-   prop = RNA_def_property(srna, "scale_length", PROP_FLOAT, PROP_UNSIGNED);
-   RNA_def_property_ui_text(
-       prop,
-       "Unit Scale",
-       "Scale to use when converting between blender units and dimensions."
-       " When working at microscopic or astronomical scale, a small or large unit scale"
-       " respectively can be used to avoid numerical precision problems");
-   RNA_def_property_range(prop, 1e-9f, 1e+9f);
-   RNA_def_property_ui_range(prop, 0.001, 100.0, 0.1, 6);
-   RNA_def_property_update(prop, NC_WINDOW, NULL);
- 
-   prop = RNA_def_property(srna, "use_separate", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "flag", USER_UNIT_OPT_SPLIT);
-   RNA_def_property_ui_text(prop, "Separate Units", "Display units in pairs (e.g. 1m 0cm)");
-   RNA_def_property_update(prop, NC_WINDOW, NULL);
- 
-   prop = RNA_def_property(srna, "length_unit", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_items(prop, DummyRNA_DEFAULT_items);
-   RNA_def_property_enum_funcs(prop, NULL, NULL, "rna_UnitSettings_length_unit_itemf");
-   RNA_def_property_ui_text(prop, "Length Unit", "Unit that will be used to display length values");
-   RNA_def_property_update(prop, NC_WINDOW, NULL);
- 
-   prop = RNA_def_property(srna, "mass_unit", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_items(prop, DummyRNA_DEFAULT_items);
-   RNA_def_property_enum_funcs(prop, NULL, NULL, "rna_UnitSettings_mass_unit_itemf");
-   RNA_def_property_ui_text(prop, "Mass Unit", "Unit that will be used to display mass values");
-   RNA_def_property_update(prop, NC_WINDOW, NULL);
- 
-   prop = RNA_def_property(srna, "time_unit", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_items(prop, DummyRNA_DEFAULT_items);
-   RNA_def_property_enum_funcs(prop, NULL, NULL, "rna_UnitSettings_time_unit_itemf");
-   RNA_def_property_ui_text(prop, "Time Unit", "Unit that will be used to display time values");
-   RNA_def_property_update(prop, NC_WINDOW, NULL);
- 
-   prop = RNA_def_property(srna, "temperature_unit", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_items(prop, DummyRNA_DEFAULT_items);
-   RNA_def_property_enum_funcs(prop, NULL, NULL, "rna_UnitSettings_temperature_unit_itemf");
-   RNA_def_property_ui_text(
-       prop, "Temperature Unit", "Unit that will be used to display temperature values");
-   RNA_def_property_update(prop, NC_WINDOW, NULL);
- }
- 
- static void rna_def_view_layer_eevee(BlenderRNA *brna)
- {
-   StructRNA *srna;
-   PropertyRNA *prop;
-   srna = RNA_def_struct(brna, "ViewLayerEEVEE", NULL);
-   RNA_def_struct_ui_text(srna, "Eevee Settings", "View layer settings for Eevee");
- 
-   prop = RNA_def_property(srna, "use_pass_volume_direct", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "render_passes", EEVEE_RENDER_PASS_VOLUME_LIGHT);
-   RNA_def_property_ui_text(prop, "Volume Light", "Deliver volume direct light pass");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
- 
-   prop = RNA_def_property(srna, "use_pass_bloom", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "render_passes", EEVEE_RENDER_PASS_BLOOM);
-   RNA_def_property_ui_text(prop, "Bloom", "Deliver bloom pass");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
- }
- 
- static void rna_def_view_layer_aov(BlenderRNA *brna)
- {
-   StructRNA *srna;
-   PropertyRNA *prop;
-   srna = RNA_def_struct(brna, "AOV", NULL);
-   RNA_def_struct_sdna(srna, "ViewLayerAOV");
-   RNA_def_struct_ui_text(srna, "Shader AOV", "");
- 
-   prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
-   RNA_def_property_string_sdna(prop, NULL, "name");
-   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-   RNA_def_property_ui_text(prop, "Name", "Name of the AOV");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   RNA_def_struct_name_property(srna, prop);
- 
-   prop = RNA_def_property(srna, "is_valid", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", AOV_CONFLICT);
-   RNA_def_property_ui_text(prop, "Valid", "Is the name of the AOV conflicting");
- 
-   prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_sdna(prop, NULL, "type");
-   RNA_def_property_enum_items(prop, rna_enum_view_layer_aov_type_items);
-   RNA_def_property_enum_default(prop, AOV_TYPE_COLOR);
-   RNA_def_property_ui_text(prop, "Type", "Data type of the AOV");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
- }
- 
- void rna_def_view_layer_common(StructRNA *srna, const bool scene)
- {
-   PropertyRNA *prop;
- 
-   prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
-   if (scene) {
-     RNA_def_property_string_funcs(prop, NULL, NULL, "rna_ViewLayer_name_set");
-   }
-   else {
-     RNA_def_property_string_sdna(prop, NULL, "name");
-   }
-   RNA_def_property_ui_text(prop, "Name", "View layer name");
-   RNA_def_struct_name_property(srna, prop);
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   if (scene) {
-     prop = RNA_def_property(srna, "material_override", PROP_POINTER, PROP_NONE);
-     RNA_def_property_pointer_sdna(prop, NULL, "mat_override");
-     RNA_def_property_struct_type(prop, "Material");
-     RNA_def_property_flag(prop, PROP_EDITABLE);
-     RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
-     RNA_def_property_ui_text(
-         prop, "Material Override", "Material to override all other materials in this view layer");
-     RNA_def_property_update(
-         prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_material_override_update");
- 
-     prop = RNA_def_property(srna, "samples", PROP_INT, PROP_UNSIGNED);
-     RNA_def_property_ui_text(prop,
-                              "Samples",
-                              "Override number of render samples for this view layer, "
-                              "0 will use the scene setting");
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-     prop = RNA_def_property(srna, "pass_alpha_threshold", PROP_FLOAT, PROP_FACTOR);
-     RNA_def_property_ui_text(
-         prop,
-         "Alpha Threshold",
-         "Z, Index, normal, UV and vector passes are only affected by surfaces with "
-         "alpha transparency equal to or higher than this threshold");
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-     prop = RNA_def_property(srna, "eevee", PROP_POINTER, PROP_NONE);
-     RNA_def_property_flag(prop, PROP_NEVER_NULL);
-     RNA_def_property_struct_type(prop, "ViewLayerEEVEE");
-     RNA_def_property_ui_text(prop, "Eevee Settings", "View layer settings for Eevee");
- 
-     prop = RNA_def_property(srna, "aovs", PROP_COLLECTION, PROP_NONE);
-     RNA_def_property_collection_sdna(prop, NULL, "aovs", NULL);
-     RNA_def_property_struct_type(prop, "AOV");
-     RNA_def_property_ui_text(prop, "Shader AOV", "");
- 
-     prop = RNA_def_property(srna, "active_aov", PROP_POINTER, PROP_NONE);
-     RNA_def_property_struct_type(prop, "AOV");
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-     RNA_def_property_ui_text(prop, "Shader AOV", "Active AOV");
- 
-     prop = RNA_def_property(srna, "active_aov_index", PROP_INT, PROP_UNSIGNED);
-     RNA_def_property_int_funcs(prop,
-                                "rna_ViewLayer_active_aov_index_get",
-                                "rna_ViewLayer_active_aov_index_set",
-                                "rna_ViewLayer_active_aov_index_range");
-     RNA_def_property_ui_text(prop, "Active AOV Index", "Index of active aov");
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-     prop = RNA_def_property(srna, "use_pass_cryptomatte_object", PROP_BOOLEAN, PROP_NONE);
-     RNA_def_property_boolean_sdna(prop, NULL, "cryptomatte_flag", VIEW_LAYER_CRYPTOMATTE_OBJECT);
-     RNA_def_property_ui_text(
-         prop,
-         "Cryptomatte Object",
-         "Render cryptomatte object pass, for isolating objects in compositing");
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
- 
-     prop = RNA_def_property(srna, "use_pass_cryptomatte_material", PROP_BOOLEAN, PROP_NONE);
-     RNA_def_property_boolean_sdna(prop, NULL, "cryptomatte_flag", VIEW_LAYER_CRYPTOMATTE_MATERIAL);
-     RNA_def_property_ui_text(
-         prop,
-         "Cryptomatte Material",
-         "Render cryptomatte material pass, for isolating materials in compositing");
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
- 
-     prop = RNA_def_property(srna, "use_pass_cryptomatte_asset", PROP_BOOLEAN, PROP_NONE);
-     RNA_def_property_boolean_sdna(prop, NULL, "cryptomatte_flag", VIEW_LAYER_CRYPTOMATTE_ASSET);
-     RNA_def_property_ui_text(
-         prop,
-         "Cryptomatte Asset",
-         "Render cryptomatte asset pass, for isolating groups of objects with the same parent");
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
- 
-     prop = RNA_def_property(srna, "pass_cryptomatte_depth", PROP_INT, PROP_NONE);
-     RNA_def_property_int_sdna(prop, NULL, "cryptomatte_levels");
-     RNA_def_property_int_default(prop, 6);
-     RNA_def_property_range(prop, 2.0, 16.0);
-     RNA_def_property_ui_text(
-         prop, "Cryptomatte Levels", "Sets how many unique objects can be distinguished per pixel");
-     RNA_def_property_ui_range(prop, 2.0, 16.0, 2.0, 0.0);
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
- 
-     prop = RNA_def_property(srna, "use_pass_cryptomatte_accurate", PROP_BOOLEAN, PROP_NONE);
-     RNA_def_property_boolean_sdna(prop, NULL, "cryptomatte_flag", VIEW_LAYER_CRYPTOMATTE_ACCURATE);
-     RNA_def_property_boolean_default(prop, true);
-     RNA_def_property_ui_text(
-         prop, "Cryptomatte Accurate", "Generate a more accurate cryptomatte pass");
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
- 
-   /* layer options */
-   prop = RNA_def_property(srna, "use_zmask", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "layflag", SCE_LAY_ZMASK);
-   RNA_def_property_ui_text(prop, "Zmask", "Only render what's in front of the solid z values");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_glsl_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "invert_zmask", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "layflag", SCE_LAY_NEG_ZMASK);
-   RNA_def_property_ui_text(
-       prop,
-       "Zmask Negate",
-       "For Zmask, only render what is behind solid z values instead of in front");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_glsl_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_all_z", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "layflag", SCE_LAY_ALL_Z);
-   RNA_def_property_ui_text(
-       prop, "All Z", "Fill in Z values for solid faces in invisible layers, for masking");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_solid", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "layflag", SCE_LAY_SOLID);
-   RNA_def_property_ui_text(prop, "Solid", "Render Solid faces in this Layer");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_halo", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "layflag", SCE_LAY_HALO);
-   RNA_def_property_ui_text(prop, "Halo", "Render Halos in this Layer (on top of Solid)");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_ztransp", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "layflag", SCE_LAY_ZTRA);
-   RNA_def_property_ui_text(prop,
-                            "Z-Transparent",
-                            "Render Z-transparent faces in this layer (on top of Solid and Halos)");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_sky", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "layflag", SCE_LAY_SKY);
-   RNA_def_property_ui_text(prop, "Sky", "Render Sky in this Layer");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_glsl_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_ao", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "layflag", SCE_LAY_AO);
-   RNA_def_property_ui_text(prop, "Ambient Occlusion", "Render Ambient Occlusion in this Layer");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_glsl_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_edge_enhance", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "layflag", SCE_LAY_EDGE);
-   RNA_def_property_ui_text(
-       prop, "Edge", "Render edge-enhance in this layer (only works for solid faces)");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_strand", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "layflag", SCE_LAY_STRAND);
-   RNA_def_property_ui_text(prop, "Strand", "Render Strands in this Layer");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_volumes", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "layflag", SCE_LAY_VOLUMES);
-   RNA_def_property_ui_text(prop, "Volumes", "Render volumes in this Layer");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   /* passes */
-   prop = RNA_def_property(srna, "use_pass_combined", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_COMBINED);
-   RNA_def_property_ui_text(prop, "Combined", "Deliver full combined RGBA buffer");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_z", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_Z);
-   RNA_def_property_ui_text(prop, "Z", "Deliver Z values pass");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_vector", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_VECTOR);
-   RNA_def_property_ui_text(prop, "Vector", "Deliver speed vector pass");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_normal", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_NORMAL);
-   RNA_def_property_ui_text(prop, "Normal", "Deliver normal pass");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_uv", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_UV);
-   RNA_def_property_ui_text(prop, "UV", "Deliver texture UV pass");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_mist", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_MIST);
-   RNA_def_property_ui_text(prop, "Mist", "Deliver mist factor pass (0.0 to 1.0)");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_object_index", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_INDEXOB);
-   RNA_def_property_ui_text(prop, "Object Index", "Deliver object index pass");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_material_index", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_INDEXMA);
-   RNA_def_property_ui_text(prop, "Material Index", "Deliver material index pass");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_shadow", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_SHADOW);
-   RNA_def_property_ui_text(prop, "Shadow", "Deliver shadow pass");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_ambient_occlusion", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_AO);
-   RNA_def_property_ui_text(prop, "Ambient Occlusion", "Deliver Ambient Occlusion pass");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_emit", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_EMIT);
-   RNA_def_property_ui_text(prop, "Emit", "Deliver emission pass");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_environment", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_ENVIRONMENT);
-   RNA_def_property_ui_text(prop, "Environment", "Deliver environment lighting pass");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_diffuse_direct", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_DIFFUSE_DIRECT);
-   RNA_def_property_ui_text(prop, "Diffuse Direct", "Deliver diffuse direct pass");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_diffuse_indirect", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_DIFFUSE_INDIRECT);
-   RNA_def_property_ui_text(prop, "Diffuse Indirect", "Deliver diffuse indirect pass");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_diffuse_color", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_DIFFUSE_COLOR);
-   RNA_def_property_ui_text(prop, "Diffuse Color", "Deliver diffuse color pass");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_glossy_direct", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_GLOSSY_DIRECT);
-   RNA_def_property_ui_text(prop, "Glossy Direct", "Deliver glossy direct pass");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_glossy_indirect", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_GLOSSY_INDIRECT);
-   RNA_def_property_ui_text(prop, "Glossy Indirect", "Deliver glossy indirect pass");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_glossy_color", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_GLOSSY_COLOR);
-   RNA_def_property_ui_text(prop, "Glossy Color", "Deliver glossy color pass");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_transmission_direct", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_TRANSM_DIRECT);
-   RNA_def_property_ui_text(prop, "Transmission Direct", "Deliver transmission direct pass");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_transmission_indirect", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_TRANSM_INDIRECT);
-   RNA_def_property_ui_text(prop, "Transmission Indirect", "Deliver transmission indirect pass");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_transmission_color", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_TRANSM_COLOR);
-   RNA_def_property_ui_text(prop, "Transmission Color", "Deliver transmission color pass");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_subsurface_direct", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_SUBSURFACE_DIRECT);
-   RNA_def_property_ui_text(prop, "Subsurface Direct", "Deliver subsurface direct pass");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_subsurface_indirect", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_SUBSURFACE_INDIRECT);
-   RNA_def_property_ui_text(prop, "Subsurface Indirect", "Deliver subsurface indirect pass");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- 
-   prop = RNA_def_property(srna, "use_pass_subsurface_color", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_SUBSURFACE_COLOR);
-   RNA_def_property_ui_text(prop, "Subsurface Color", "Deliver subsurface color pass");
-   if (scene) {
-     RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-   }
-   else {
-     RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-   }
- }
- 
- static void rna_def_freestyle_modules(BlenderRNA *brna, PropertyRNA *cprop)
- {
-   StructRNA *srna;
-   FunctionRNA *func;
-   PropertyRNA *parm;
- 
-   RNA_def_property_srna(cprop, "FreestyleModules");
-   srna = RNA_def_struct(brna, "FreestyleModules", NULL);
-   RNA_def_struct_sdna(srna, "FreestyleSettings");
-   RNA_def_struct_ui_text(
-       srna, "Style Modules", "A list of style modules (to be applied from top to bottom)");
- 
-   func = RNA_def_function(srna, "new", "rna_FreestyleSettings_module_add");
-   RNA_def_function_ui_description(func,
-                                   "Add a style module to scene render layer Freestyle settings");
-   RNA_def_function_flag(func, FUNC_USE_SELF_ID);
-   parm = RNA_def_pointer(
-       func, "module", "FreestyleModuleSettings", "", "Newly created style module");
-   RNA_def_function_return(func, parm);
- 
-   func = RNA_def_function(srna, "remove", "rna_FreestyleSettings_module_remove");
-   RNA_def_function_ui_description(
-       func, "Remove a style module from scene render layer Freestyle settings");
-   RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_REPORTS);
-   parm = RNA_def_pointer(func, "module", "FreestyleModuleSettings", "", "Style module to remove");
-   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
-   RNA_def_parameter_clear_flags(parm, PROP_THICK_WRAP, 0);
- }
- 
- static void rna_def_freestyle_linesets(BlenderRNA *brna, PropertyRNA *cprop)
- {
-   StructRNA *srna;
-   PropertyRNA *prop;
-   FunctionRNA *func;
-   PropertyRNA *parm;
- 
-   RNA_def_property_srna(cprop, "Linesets");
-   srna = RNA_def_struct(brna, "Linesets", NULL);
-   RNA_def_struct_sdna(srna, "FreestyleSettings");
-   RNA_def_struct_ui_text(
-       srna, "Line Sets", "Line sets for associating lines and style parameters");
- 
-   prop = RNA_def_property(srna, "active", PROP_POINTER, PROP_NONE);
-   RNA_def_property_struct_type(prop, "FreestyleLineSet");
-   RNA_def_property_pointer_funcs(
-       prop, "rna_FreestyleSettings_active_lineset_get", NULL, NULL, NULL);
-   RNA_def_property_ui_text(prop, "Active Line Set", "Active line set being displayed");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "active_index", PROP_INT, PROP_UNSIGNED);
-   RNA_def_property_int_funcs(prop,
-                              "rna_FreestyleSettings_active_lineset_index_get",
-                              "rna_FreestyleSettings_active_lineset_index_set",
-                              "rna_FreestyleSettings_active_lineset_index_range");
-   RNA_def_property_ui_text(prop, "Active Line Set Index", "Index of active line set slot");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   func = RNA_def_function(srna, "new", "rna_FreestyleSettings_lineset_add");
-   RNA_def_function_ui_description(func, "Add a line set to scene render layer Freestyle settings");
-   RNA_def_function_flag(func, FUNC_USE_MAIN | FUNC_USE_SELF_ID);
-   parm = RNA_def_string(func, "name", "LineSet", 0, "", "New name for the line set (not unique)");
-   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
-   parm = RNA_def_pointer(func, "lineset", "FreestyleLineSet", "", "Newly created line set");
-   RNA_def_function_return(func, parm);
- 
-   func = RNA_def_function(srna, "remove", "rna_FreestyleSettings_lineset_remove");
-   RNA_def_function_ui_description(func,
-                                   "Remove a line set from scene render layer Freestyle settings");
-   RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_REPORTS);
-   parm = RNA_def_pointer(func, "lineset", "FreestyleLineSet", "", "Line set to remove");
-   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
-   RNA_def_parameter_clear_flags(parm, PROP_THICK_WRAP, 0);
- }
- 
- void rna_def_freestyle_settings(BlenderRNA *brna)
- {
-   StructRNA *srna;
-   PropertyRNA *prop;
- 
-   static const EnumPropertyItem edge_type_negation_items[] = {
-       {0,
-        "INCLUSIVE",
-        0,
-        "Inclusive",
-        "Select feature edges satisfying the given edge type conditions"},
-       {FREESTYLE_LINESET_FE_NOT,
-        "EXCLUSIVE",
-        0,
-        "Exclusive",
-        "Select feature edges not satisfying the given edge type conditions"},
-       {0, NULL, 0, NULL, NULL},
-   };
- 
-   static const EnumPropertyItem edge_type_combination_items[] = {
-       {0,
-        "OR",
-        0,
-        "Logical OR",
-        "Select feature edges satisfying at least one of edge type conditions"},
-       {FREESTYLE_LINESET_FE_AND,
-        "AND",
-        0,
-        "Logical AND",
-        "Select feature edges satisfying all edge type conditions"},
-       {0, NULL, 0, NULL, NULL},
-   };
- 
-   static const EnumPropertyItem collection_negation_items[] = {
-       {0,
-        "INCLUSIVE",
-        0,
-        "Inclusive",
-        "Select feature edges belonging to some object in the group"},
-       {FREESTYLE_LINESET_GR_NOT,
-        "EXCLUSIVE",
-        0,
-        "Exclusive",
-        "Select feature edges not belonging to any object in the group"},
-       {0, NULL, 0, NULL, NULL},
-   };
- 
-   static const EnumPropertyItem face_mark_negation_items[] = {
-       {0,
-        "INCLUSIVE",
-        0,
-        "Inclusive",
-        "Select feature edges satisfying the given face mark conditions"},
-       {FREESTYLE_LINESET_FM_NOT,
-        "EXCLUSIVE",
-        0,
-        "Exclusive",
-        "Select feature edges not satisfying the given face mark conditions"},
-       {0, NULL, 0, NULL, NULL},
-   };
- 
-   static const EnumPropertyItem face_mark_condition_items[] = {
-       {0, "ONE", 0, "One Face", "Select a feature edge if either of its adjacent faces is marked"},
-       {FREESTYLE_LINESET_FM_BOTH,
-        "BOTH",
-        0,
-        "Both Faces",
-        "Select a feature edge if both of its adjacent faces are marked"},
-       {0, NULL, 0, NULL, NULL},
-   };
- 
-   static const EnumPropertyItem freestyle_ui_mode_items[] = {
-       {FREESTYLE_CONTROL_SCRIPT_MODE,
-        "SCRIPT",
-        0,
-        "Python Scripting Mode",
-        "Advanced mode for using style modules written in Python"},
-       {FREESTYLE_CONTROL_EDITOR_MODE,
-        "EDITOR",
-        0,
-        "Parameter Editor Mode",
-        "Basic mode for interactive style parameter editing"},
-       {0, NULL, 0, NULL, NULL},
-   };
- 
-   static const EnumPropertyItem visibility_items[] = {
-       {FREESTYLE_QI_VISIBLE, "VISIBLE", 0, "Visible", "Select visible feature edges"},
-       {FREESTYLE_QI_HIDDEN, "HIDDEN", 0, "Hidden", "Select hidden feature edges"},
+@@ -4724,7 +4724,7 @@ void rna_def_freestyle_settings(BlenderRNA *brna)
        {FREESTYLE_QI_RANGE,
         "RANGE",
         0,
@@ -2661,1000 +1435,3 @@ index af31f16f4e0..9f32393eb05 100644
         "Select feature edges within a range of quantitative invisibility (QI) values"},
        {0, NULL, 0, NULL, NULL},
    };
- 
-   /* FreestyleLineSet */
- 
-   srna = RNA_def_struct(brna, "FreestyleLineSet", NULL);
-   RNA_def_struct_ui_text(
-       srna, "Freestyle Line Set", "Line set for associating lines and style parameters");
- 
-   /* access to line style settings is redirected through functions
-    * to allow proper id-buttons functionality
-    */
-   prop = RNA_def_property(srna, "linestyle", PROP_POINTER, PROP_NONE);
-   RNA_def_property_struct_type(prop, "FreestyleLineStyle");
-   RNA_def_property_flag(prop, PROP_EDITABLE | PROP_NEVER_NULL);
-   RNA_def_property_pointer_funcs(prop,
-                                  "rna_FreestyleLineSet_linestyle_get",
-                                  "rna_FreestyleLineSet_linestyle_set",
-                                  NULL,
-                                  NULL);
-   RNA_def_property_ui_text(prop, "Line Style", "Line style settings");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
-   RNA_def_property_string_sdna(prop, NULL, "name");
-   RNA_def_property_ui_text(prop, "Line Set Name", "Line set name");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
-   RNA_def_struct_name_property(srna, prop);
- 
-   prop = RNA_def_property(srna, "show_render", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "flags", FREESTYLE_LINESET_ENABLED);
-   RNA_def_property_ui_text(
-       prop, "Render", "Enable or disable this line set during stroke rendering");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "select_by_visibility", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "selection", FREESTYLE_SEL_VISIBILITY);
-   RNA_def_property_ui_text(
-       prop, "Selection by Visibility", "Select feature edges based on visibility");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "select_by_edge_types", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "selection", FREESTYLE_SEL_EDGE_TYPES);
-   RNA_def_property_ui_text(
-       prop, "Selection by Edge Types", "Select feature edges based on edge types");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "select_by_collection", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "selection", FREESTYLE_SEL_GROUP);
-   RNA_def_property_ui_text(
-       prop, "Selection by Collection", "Select feature edges based on a collection of objects");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "select_by_image_border", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "selection", FREESTYLE_SEL_IMAGE_BORDER);
-   RNA_def_property_ui_text(prop,
-                            "Selection by Image Border",
-                            "Select feature edges by image border (less memory consumption)");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "select_by_face_marks", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "selection", FREESTYLE_SEL_FACE_MARK);
-   RNA_def_property_ui_text(prop, "Selection by Face Marks", "Select feature edges by face marks");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "edge_type_negation", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_bitflag_sdna(prop, NULL, "flags");
-   RNA_def_property_enum_items(prop, edge_type_negation_items);
-   RNA_def_property_ui_text(
-       prop,
-       "Edge Type Negation",
-       "Specify either inclusion or exclusion of feature edges selected by edge types");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "edge_type_combination", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_bitflag_sdna(prop, NULL, "flags");
-   RNA_def_property_enum_items(prop, edge_type_combination_items);
-   RNA_def_property_ui_text(
-       prop,
-       "Edge Type Combination",
-       "Specify a logical combination of selection conditions on feature edge types");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "collection", PROP_POINTER, PROP_NONE);
-   RNA_def_property_pointer_sdna(prop, NULL, "group");
-   RNA_def_property_struct_type(prop, "Collection");
-   RNA_def_property_flag(prop, PROP_EDITABLE);
-   RNA_def_property_ui_text(
-       prop, "Collection", "A collection of objects based on which feature edges are selected");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "collection_negation", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_bitflag_sdna(prop, NULL, "flags");
-   RNA_def_property_enum_items(prop, collection_negation_items);
-   RNA_def_property_ui_text(prop,
-                            "Collection Negation",
-                            "Specify either inclusion or exclusion of feature edges belonging to a "
-                            "collection of objects");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "face_mark_negation", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_bitflag_sdna(prop, NULL, "flags");
-   RNA_def_property_enum_items(prop, face_mark_negation_items);
-   RNA_def_property_ui_text(
-       prop,
-       "Face Mark Negation",
-       "Specify either inclusion or exclusion of feature edges selected by face marks");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "face_mark_condition", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_bitflag_sdna(prop, NULL, "flags");
-   RNA_def_property_enum_items(prop, face_mark_condition_items);
-   RNA_def_property_ui_text(prop,
-                            "Face Mark Condition",
-                            "Specify a feature edge selection condition based on face marks");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "select_silhouette", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "edge_types", FREESTYLE_FE_SILHOUETTE);
-   RNA_def_property_ui_text(
-       prop,
-       "Silhouette",
-       "Select silhouettes (edges at the boundary of visible and hidden faces)");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "select_border", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "edge_types", FREESTYLE_FE_BORDER);
-   RNA_def_property_ui_text(prop, "Border", "Select border edges (open mesh edges)");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "select_crease", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "edge_types", FREESTYLE_FE_CREASE);
-   RNA_def_property_ui_text(prop,
-                            "Crease",
-                            "Select crease edges (those between two faces making an angle smaller "
-                            "than the Crease Angle)");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "select_ridge_valley", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "edge_types", FREESTYLE_FE_RIDGE_VALLEY);
-   RNA_def_property_ui_text(
-       prop,
-       "Ridge & Valley",
-       "Select ridges and valleys (boundary lines between convex and concave areas of surface)");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "select_suggestive_contour", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "edge_types", FREESTYLE_FE_SUGGESTIVE_CONTOUR);
-   RNA_def_property_ui_text(
-       prop, "Suggestive Contour", "Select suggestive contours (almost silhouette/contour edges)");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "select_material_boundary", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "edge_types", FREESTYLE_FE_MATERIAL_BOUNDARY);
-   RNA_def_property_ui_text(prop, "Material Boundary", "Select edges at material boundaries");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "select_contour", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "edge_types", FREESTYLE_FE_CONTOUR);
-   RNA_def_property_ui_text(prop, "Contour", "Select contours (outer silhouettes of each object)");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "select_external_contour", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "edge_types", FREESTYLE_FE_EXTERNAL_CONTOUR);
-   RNA_def_property_ui_text(
-       prop,
-       "External Contour",
-       "Select external contours (outer silhouettes of occluding and occluded objects)");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "select_edge_mark", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "edge_types", FREESTYLE_FE_EDGE_MARK);
-   RNA_def_property_ui_text(
-       prop, "Edge Mark", "Select edge marks (edges annotated by Freestyle edge marks)");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "exclude_silhouette", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "exclude_edge_types", FREESTYLE_FE_SILHOUETTE);
-   RNA_def_property_ui_text(prop, "Silhouette", "Exclude silhouette edges");
-   RNA_def_property_ui_icon(prop, ICON_X, 0);
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "exclude_border", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "exclude_edge_types", FREESTYLE_FE_BORDER);
-   RNA_def_property_ui_text(prop, "Border", "Exclude border edges");
-   RNA_def_property_ui_icon(prop, ICON_X, 0);
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "exclude_crease", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "exclude_edge_types", FREESTYLE_FE_CREASE);
-   RNA_def_property_ui_text(prop, "Crease", "Exclude crease edges");
-   RNA_def_property_ui_icon(prop, ICON_X, 0);
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "exclude_ridge_valley", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "exclude_edge_types", FREESTYLE_FE_RIDGE_VALLEY);
-   RNA_def_property_ui_text(prop, "Ridge & Valley", "Exclude ridges and valleys");
-   RNA_def_property_ui_icon(prop, ICON_X, 0);
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "exclude_suggestive_contour", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "exclude_edge_types", FREESTYLE_FE_SUGGESTIVE_CONTOUR);
-   RNA_def_property_ui_text(prop, "Suggestive Contour", "Exclude suggestive contours");
-   RNA_def_property_ui_icon(prop, ICON_X, 0);
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "exclude_material_boundary", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "exclude_edge_types", FREESTYLE_FE_MATERIAL_BOUNDARY);
-   RNA_def_property_ui_text(prop, "Material Boundary", "Exclude edges at material boundaries");
-   RNA_def_property_ui_icon(prop, ICON_X, 0);
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "exclude_contour", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "exclude_edge_types", FREESTYLE_FE_CONTOUR);
-   RNA_def_property_ui_text(prop, "Contour", "Exclude contours");
-   RNA_def_property_ui_icon(prop, ICON_X, 0);
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "exclude_external_contour", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "exclude_edge_types", FREESTYLE_FE_EXTERNAL_CONTOUR);
-   RNA_def_property_ui_text(prop, "External Contour", "Exclude external contours");
-   RNA_def_property_ui_icon(prop, ICON_X, 0);
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "exclude_edge_mark", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "exclude_edge_types", FREESTYLE_FE_EDGE_MARK);
-   RNA_def_property_ui_text(prop, "Edge Mark", "Exclude edge marks");
-   RNA_def_property_ui_icon(prop, ICON_X, 0);
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "visibility", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_sdna(prop, NULL, "qi");
-   RNA_def_property_enum_items(prop, visibility_items);
-   RNA_def_property_ui_text(
-       prop, "Visibility", "Determine how to use visibility for feature edge selection");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "qi_start", PROP_INT, PROP_UNSIGNED);
-   RNA_def_property_int_sdna(prop, NULL, "qi_start");
-   RNA_def_property_range(prop, 0, INT_MAX);
-   RNA_def_property_ui_text(prop, "Start", "First QI value of the QI range");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "qi_end", PROP_INT, PROP_UNSIGNED);
-   RNA_def_property_int_sdna(prop, NULL, "qi_end");
-   RNA_def_property_range(prop, 0, INT_MAX);
-   RNA_def_property_ui_text(prop, "End", "Last QI value of the QI range");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   /* FreestyleModuleSettings */
- 
-   srna = RNA_def_struct(brna, "FreestyleModuleSettings", NULL);
-   RNA_def_struct_sdna(srna, "FreestyleModuleConfig");
-   RNA_def_struct_ui_text(
-       srna, "Freestyle Module", "Style module configuration for specifying a style module");
- 
-   prop = RNA_def_property(srna, "script", PROP_POINTER, PROP_NONE);
-   RNA_def_property_struct_type(prop, "Text");
-   RNA_def_property_flag(prop, PROP_EDITABLE);
-   RNA_def_property_ui_text(prop, "Style Module", "Python script to define a style module");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "use", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "is_displayed", 1);
-   RNA_def_property_ui_text(
-       prop, "Use", "Enable or disable this style module during stroke rendering");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   /* FreestyleSettings */
- 
-   srna = RNA_def_struct(brna, "FreestyleSettings", NULL);
-   RNA_def_struct_sdna(srna, "FreestyleConfig");
-   RNA_def_struct_nested(brna, srna, "ViewLayer");
-   RNA_def_struct_ui_text(
-       srna, "Freestyle Settings", "Freestyle settings for a ViewLayer data-block");
- 
-   prop = RNA_def_property(srna, "modules", PROP_COLLECTION, PROP_NONE);
-   RNA_def_property_collection_sdna(prop, NULL, "modules", NULL);
-   RNA_def_property_struct_type(prop, "FreestyleModuleSettings");
-   RNA_def_property_ui_text(
-       prop, "Style Modules", "A list of style modules (to be applied from top to bottom)");
-   rna_def_freestyle_modules(brna, prop);
- 
-   prop = RNA_def_property(srna, "mode", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_sdna(prop, NULL, "mode");
-   RNA_def_property_enum_items(prop, freestyle_ui_mode_items);
-   RNA_def_property_ui_text(prop, "Control Mode", "Select the Freestyle control mode");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "use_culling", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "flags", FREESTYLE_CULLING);
-   RNA_def_property_ui_text(prop, "Culling", "If enabled, out-of-view edges are ignored");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "use_suggestive_contours", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "flags", FREESTYLE_SUGGESTIVE_CONTOURS_FLAG);
-   RNA_def_property_ui_text(prop, "Suggestive Contours", "Enable suggestive contours");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "use_ridges_and_valleys", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "flags", FREESTYLE_RIDGES_AND_VALLEYS_FLAG);
-   RNA_def_property_ui_text(prop, "Ridges and Valleys", "Enable ridges and valleys");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "use_material_boundaries", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "flags", FREESTYLE_MATERIAL_BOUNDARIES_FLAG);
-   RNA_def_property_ui_text(prop, "Material Boundaries", "Enable material boundaries");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "use_smoothness", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "flags", FREESTYLE_FACE_SMOOTHNESS_FLAG);
-   RNA_def_property_ui_text(
-       prop, "Face Smoothness", "Take face smoothness into account in view map calculation");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "use_advanced_options", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "flags", FREESTYLE_ADVANCED_OPTIONS_FLAG);
-   RNA_def_property_ui_text(
-       prop,
-       "Advanced Options",
-       "Enable advanced edge detection options (sphere radius and Kr derivative epsilon)");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "use_view_map_cache", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "flags", FREESTYLE_VIEW_MAP_CACHE);
-   RNA_def_property_ui_text(
-       prop,
-       "View Map Cache",
-       "Keep the computed view map and avoid recalculating it if mesh geometry is unchanged");
-   RNA_def_property_update(
-       prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_use_view_map_cache_update");
- 
-   prop = RNA_def_property(srna, "as_render_pass", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "flags", FREESTYLE_AS_RENDER_PASS);
-   RNA_def_property_ui_text(
-       prop,
-       "As Render Pass",
-       "Renders Freestyle output to a separate pass instead of overlaying it on the Combined pass");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
- 
-   prop = RNA_def_property(srna, "sphere_radius", PROP_FLOAT, PROP_NONE);
-   RNA_def_property_float_sdna(prop, NULL, "sphere_radius");
-   RNA_def_property_range(prop, 0.0, 1000.0);
-   RNA_def_property_ui_text(prop, "Sphere Radius", "Sphere radius for computing curvatures");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "kr_derivative_epsilon", PROP_FLOAT, PROP_NONE);
-   RNA_def_property_float_sdna(prop, NULL, "dkr_epsilon");
-   RNA_def_property_range(prop, -1000.0, 1000.0);
-   RNA_def_property_ui_text(
-       prop, "Kr Derivative Epsilon", "Kr derivative epsilon for computing suggestive contours");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "crease_angle", PROP_FLOAT, PROP_ANGLE);
-   RNA_def_property_float_sdna(prop, NULL, "crease_angle");
-   RNA_def_property_range(prop, 0.0, DEG2RAD(180.0));
-   RNA_def_property_ui_text(prop, "Crease Angle", "Angular threshold for detecting crease edges");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
- 
-   prop = RNA_def_property(srna, "linesets", PROP_COLLECTION, PROP_NONE);
-   RNA_def_property_collection_sdna(prop, NULL, "linesets", NULL);
-   RNA_def_property_struct_type(prop, "FreestyleLineSet");
-   RNA_def_property_ui_text(prop, "Line Sets", "");
-   rna_def_freestyle_linesets(brna, prop);
- }
- 
- static void rna_def_bake_data(BlenderRNA *brna)
- {
-   StructRNA *srna;
-   PropertyRNA *prop;
- 
-   srna = RNA_def_struct(brna, "BakeSettings", NULL);
-   RNA_def_struct_sdna(srna, "BakeData");
-   RNA_def_struct_nested(brna, srna, "RenderSettings");
-   RNA_def_struct_ui_text(srna, "Bake Data", "Bake data for a Scene data-block");
-   RNA_def_struct_path_func(srna, "rna_BakeSettings_path");
- 
-   prop = RNA_def_property(srna, "cage_object", PROP_POINTER, PROP_NONE);
-   RNA_def_property_ui_text(
-       prop,
-       "Cage Object",
-       "Object to use as cage "
-       "instead of calculating the cage from the active object with cage extrusion");
-   RNA_def_property_flag(prop, PROP_EDITABLE);
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "filepath", PROP_STRING, PROP_FILEPATH);
-   RNA_def_property_ui_text(prop, "File Path", "Image filepath to use when saving externally");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "width", PROP_INT, PROP_PIXEL);
-   RNA_def_property_range(prop, 4, 10000);
-   RNA_def_property_ui_text(prop, "Width", "Horizontal dimension of the baking map");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "height", PROP_INT, PROP_PIXEL);
-   RNA_def_property_range(prop, 4, 10000);
-   RNA_def_property_ui_text(prop, "Height", "Vertical dimension of the baking map");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "margin", PROP_INT, PROP_PIXEL);
-   RNA_def_property_range(prop, 0, SHRT_MAX);
-   RNA_def_property_ui_range(prop, 0, 64, 1, 1);
-   RNA_def_property_ui_text(prop, "Margin", "Extends the baked result as a post process filter");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "max_ray_distance", PROP_FLOAT, PROP_DISTANCE);
-   RNA_def_property_range(prop, 0.0, FLT_MAX);
-   RNA_def_property_ui_range(prop, 0.0, 1.0, 1, 3);
-   RNA_def_property_ui_text(prop,
-                            "Max Ray Distance",
-                            "The maximum ray distance for matching points between the active and "
-                            "selected objects. If zero, there is no limit");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "cage_extrusion", PROP_FLOAT, PROP_DISTANCE);
-   RNA_def_property_range(prop, 0.0, FLT_MAX);
-   RNA_def_property_ui_range(prop, 0.0, 1.0, 1, 3);
-   RNA_def_property_ui_text(
-       prop,
-       "Cage Extrusion",
-       "Inflate the active object by the specified distance for baking. This helps matching to "
-       "points nearer to the outside of the selected object meshes");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "normal_space", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_bitflag_sdna(prop, NULL, "normal_space");
-   RNA_def_property_enum_items(prop, rna_enum_normal_space_items);
-   RNA_def_property_ui_text(prop, "Normal Space", "Choose normal space for baking");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "normal_r", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_bitflag_sdna(prop, NULL, "normal_swizzle[0]");
-   RNA_def_property_enum_items(prop, rna_enum_normal_swizzle_items);
-   RNA_def_property_ui_text(prop, "Normal Space", "Axis to bake in red channel");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "normal_g", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_bitflag_sdna(prop, NULL, "normal_swizzle[1]");
-   RNA_def_property_enum_items(prop, rna_enum_normal_swizzle_items);
-   RNA_def_property_ui_text(prop, "Normal Space", "Axis to bake in green channel");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "normal_b", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_bitflag_sdna(prop, NULL, "normal_swizzle[2]");
-   RNA_def_property_enum_items(prop, rna_enum_normal_swizzle_items);
-   RNA_def_property_ui_text(prop, "Normal Space", "Axis to bake in blue channel");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "image_settings", PROP_POINTER, PROP_NONE);
-   RNA_def_property_flag(prop, PROP_NEVER_NULL);
-   RNA_def_property_pointer_sdna(prop, NULL, "im_format");
-   RNA_def_property_struct_type(prop, "ImageFormatSettings");
-   RNA_def_property_ui_text(prop, "Image Format", "");
- 
-   prop = RNA_def_property(srna, "target", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_items(prop, rna_enum_bake_target_items);
-   RNA_def_property_ui_text(prop, "Target", "Where to output the baked map");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "save_mode", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_bitflag_sdna(prop, NULL, "save_mode");
-   RNA_def_property_enum_items(prop, rna_enum_bake_save_mode_items);
-   RNA_def_property_ui_text(prop, "Save Mode", "Where to save baked image textures");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   /* flags */
-   prop = RNA_def_property(srna, "use_selected_to_active", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "flag", R_BAKE_TO_ACTIVE);
-   RNA_def_property_ui_text(prop,
-                            "Selected to Active",
-                            "Bake shading on the surface of selected objects to the active object");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "use_clear", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "flag", R_BAKE_CLEAR);
-   RNA_def_property_ui_text(prop, "Clear", "Clear Images before baking (internal only)");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "use_split_materials", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "flag", R_BAKE_SPLIT_MAT);
-   RNA_def_property_ui_text(
-       prop, "Split Materials", "Split external images per material (external only)");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "use_automatic_name", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "flag", R_BAKE_AUTO_NAME);
-   RNA_def_property_ui_text(
-       prop,
-       "Automatic Name",
-       "Automatically name the output file with the pass type (external only)");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "use_cage", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "flag", R_BAKE_CAGE);
-   RNA_def_property_ui_text(prop, "Cage", "Cast rays to active object from a cage");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   /* custom passes flags */
-   prop = RNA_def_property(srna, "use_pass_ambient_occlusion", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "pass_filter", R_BAKE_PASS_FILTER_AO);
-   RNA_def_property_ui_text(prop, "Ambient Occlusion", "Add ambient occlusion contribution");
- 
-   prop = RNA_def_property(srna, "use_pass_emit", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "pass_filter", R_BAKE_PASS_FILTER_EMIT);
-   RNA_def_property_ui_text(prop, "Emit", "Add emission contribution");
- 
-   prop = RNA_def_property(srna, "use_pass_direct", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "pass_filter", R_BAKE_PASS_FILTER_DIRECT);
-   RNA_def_property_ui_text(prop, "Direct", "Add direct lighting contribution");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "use_pass_indirect", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "pass_filter", R_BAKE_PASS_FILTER_INDIRECT);
-   RNA_def_property_ui_text(prop, "Indirect", "Add indirect lighting contribution");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "use_pass_color", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "pass_filter", R_BAKE_PASS_FILTER_COLOR);
-   RNA_def_property_ui_text(prop, "Color", "Color the pass");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "use_pass_diffuse", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "pass_filter", R_BAKE_PASS_FILTER_DIFFUSE);
-   RNA_def_property_ui_text(prop, "Diffuse", "Add diffuse contribution");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "use_pass_glossy", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "pass_filter", R_BAKE_PASS_FILTER_GLOSSY);
-   RNA_def_property_ui_text(prop, "Glossy", "Add glossy contribution");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "use_pass_transmission", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "pass_filter", R_BAKE_PASS_FILTER_TRANSM);
-   RNA_def_property_ui_text(prop, "Transmission", "Add transmission contribution");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "pass_filter", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_sdna(prop, NULL, "pass_filter");
-   RNA_def_property_enum_items(prop, rna_enum_bake_pass_filter_type_items);
-   RNA_def_property_flag(prop, PROP_ENUM_FLAG);
-   RNA_def_property_ui_text(prop, "Pass Filter", "Passes to include in the active baking pass");
-   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
- }
- 
- static void rna_def_view_layers(BlenderRNA *brna, PropertyRNA *cprop)
- {
-   StructRNA *srna;
-   FunctionRNA *func;
-   PropertyRNA *parm;
- 
-   RNA_def_property_srna(cprop, "ViewLayers");
-   srna = RNA_def_struct(brna, "ViewLayers", NULL);
-   RNA_def_struct_sdna(srna, "Scene");
-   RNA_def_struct_ui_text(srna, "Render Layers", "Collection of render layers");
- 
-   func = RNA_def_function(srna, "new", "rna_ViewLayer_new");
-   RNA_def_function_ui_description(func, "Add a view layer to scene");
-   RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_MAIN);
-   parm = RNA_def_string(
-       func, "name", "ViewLayer", 0, "", "New name for the view layer (not unique)");
-   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
-   parm = RNA_def_pointer(func, "result", "ViewLayer", "", "Newly created view layer");
-   RNA_def_function_return(func, parm);
- 
-   func = RNA_def_function(srna, "remove", "rna_ViewLayer_remove");
-   RNA_def_function_ui_description(func, "Remove a view layer");
-   RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_MAIN | FUNC_USE_REPORTS);
-   parm = RNA_def_pointer(func, "layer", "ViewLayer", "", "View layer to remove");
-   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
-   RNA_def_parameter_clear_flags(parm, PROP_THICK_WRAP, 0);
- }
- 
- /* Render Views - MultiView */
- static void rna_def_scene_render_view(BlenderRNA *brna)
- {
-   StructRNA *srna;
-   PropertyRNA *prop;
- 
-   srna = RNA_def_struct(brna, "SceneRenderView", NULL);
-   RNA_def_struct_ui_text(
-       srna, "Scene Render View", "Render viewpoint for 3D stereo and multiview rendering");
-   RNA_def_struct_ui_icon(srna, ICON_RESTRICT_RENDER_OFF);
-   RNA_def_struct_path_func(srna, "rna_SceneRenderView_path");
- 
-   prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
-   RNA_def_property_string_funcs(prop, NULL, NULL, "rna_SceneRenderView_name_set");
-   RNA_def_property_ui_text(prop, "Name", "Render view name");
-   RNA_def_struct_name_property(srna, prop);
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "file_suffix", PROP_STRING, PROP_NONE);
-   RNA_def_property_string_sdna(prop, NULL, "suffix");
-   RNA_def_property_ui_text(prop, "File Suffix", "Suffix added to the render images for this view");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "camera_suffix", PROP_STRING, PROP_NONE);
-   RNA_def_property_string_sdna(prop, NULL, "suffix");
-   RNA_def_property_ui_text(
-       prop,
-       "Camera Suffix",
-       "Suffix to identify the cameras to use, and added to the render images for this view");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "use", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_negative_sdna(prop, NULL, "viewflag", SCE_VIEW_DISABLE);
-   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-   RNA_def_property_ui_text(prop, "Enabled", "Disable or enable the render view");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- }
- 
- static void rna_def_render_views(BlenderRNA *brna, PropertyRNA *cprop)
- {
-   StructRNA *srna;
-   PropertyRNA *prop;
- 
-   FunctionRNA *func;
-   PropertyRNA *parm;
- 
-   RNA_def_property_srna(cprop, "RenderViews");
-   srna = RNA_def_struct(brna, "RenderViews", NULL);
-   RNA_def_struct_sdna(srna, "RenderData");
-   RNA_def_struct_ui_text(srna, "Render Views", "Collection of render views");
- 
-   prop = RNA_def_property(srna, "active_index", PROP_INT, PROP_UNSIGNED);
-   RNA_def_property_int_sdna(prop, NULL, "actview");
-   RNA_def_property_int_funcs(prop,
-                              "rna_RenderSettings_active_view_index_get",
-                              "rna_RenderSettings_active_view_index_set",
-                              "rna_RenderSettings_active_view_index_range");
-   RNA_def_property_ui_text(prop, "Active View Index", "Active index in render view array");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "active", PROP_POINTER, PROP_NONE);
-   RNA_def_property_struct_type(prop, "SceneRenderView");
-   RNA_def_property_pointer_funcs(prop,
-                                  "rna_RenderSettings_active_view_get",
-                                  "rna_RenderSettings_active_view_set",
-                                  NULL,
-                                  NULL);
-   RNA_def_property_flag(prop, PROP_EDITABLE | PROP_NEVER_NULL);
-   RNA_def_property_ui_text(prop, "Active Render View", "Active Render View");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   func = RNA_def_function(srna, "new", "rna_RenderView_new");
-   RNA_def_function_ui_description(func, "Add a render view to scene");
-   RNA_def_function_flag(func, FUNC_USE_SELF_ID);
-   parm = RNA_def_string(func, "name", "RenderView", 0, "", "New name for the marker (not unique)");
-   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
-   parm = RNA_def_pointer(func, "result", "SceneRenderView", "", "Newly created render view");
-   RNA_def_function_return(func, parm);
- 
-   func = RNA_def_function(srna, "remove", "rna_RenderView_remove");
-   RNA_def_function_ui_description(func, "Remove a render view");
-   RNA_def_function_flag(func, FUNC_USE_MAIN | FUNC_USE_REPORTS | FUNC_USE_SELF_ID);
-   parm = RNA_def_pointer(func, "view", "SceneRenderView", "", "Render view to remove");
-   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
-   RNA_def_parameter_clear_flags(parm, PROP_THICK_WRAP, 0);
- }
- 
- static void rna_def_image_format_stereo3d_format(BlenderRNA *brna)
- {
-   StructRNA *srna;
-   PropertyRNA *prop;
- 
-   /* rna_enum_stereo3d_display_items, without (S3D_DISPLAY_PAGEFLIP) */
-   static const EnumPropertyItem stereo3d_display_items[] = {
-       {S3D_DISPLAY_ANAGLYPH,
-        "ANAGLYPH",
-        0,
-        "Anaglyph",
-        "Render views for left and right eyes as two differently filtered colors in a single image "
-        "(anaglyph glasses are required)"},
-       {S3D_DISPLAY_INTERLACE,
-        "INTERLACE",
-        0,
-        "Interlace",
-        "Render views for left and right eyes interlaced in a single image (3D-ready monitor is "
-        "required)"},
-       {S3D_DISPLAY_SIDEBYSIDE,
-        "SIDEBYSIDE",
-        0,
-        "Side-by-Side",
-        "Render views for left and right eyes side-by-side"},
-       {S3D_DISPLAY_TOPBOTTOM,
-        "TOPBOTTOM",
-        0,
-        "Top-Bottom",
-        "Render views for left and right eyes one above another"},
-       {0, NULL, 0, NULL, NULL},
-   };
- 
-   srna = RNA_def_struct(brna, "Stereo3dFormat", NULL);
-   RNA_def_struct_sdna(srna, "Stereo3dFormat");
-   RNA_def_struct_clear_flag(srna, STRUCT_UNDO);
-   RNA_def_struct_ui_text(srna, "Stereo Output", "Settings for stereo output");
- 
-   prop = RNA_def_property(srna, "display_mode", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_sdna(prop, NULL, "display_mode");
-   RNA_def_property_enum_items(prop, stereo3d_display_items);
-   RNA_def_property_ui_text(prop, "Stereo Mode", "");
-   RNA_def_property_update(prop, NC_IMAGE | ND_DISPLAY, "rna_Stereo3dFormat_update");
- 
-   prop = RNA_def_property(srna, "anaglyph_type", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_items(prop, rna_enum_stereo3d_anaglyph_type_items);
-   RNA_def_property_ui_text(prop, "Anaglyph Type", "");
-   RNA_def_property_update(prop, NC_IMAGE | ND_DISPLAY, "rna_Stereo3dFormat_update");
- 
-   prop = RNA_def_property(srna, "interlace_type", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_items(prop, rna_enum_stereo3d_interlace_type_items);
-   RNA_def_property_ui_text(prop, "Interlace Type", "");
-   RNA_def_property_update(prop, NC_IMAGE | ND_DISPLAY, "rna_Stereo3dFormat_update");
- 
-   prop = RNA_def_property(srna, "use_interlace_swap", PROP_BOOLEAN, PROP_BOOLEAN);
-   RNA_def_property_boolean_sdna(prop, NULL, "flag", S3D_INTERLACE_SWAP);
-   RNA_def_property_ui_text(prop, "Swap Left/Right", "Swap left and right stereo channels");
-   RNA_def_property_update(prop, NC_IMAGE | ND_DISPLAY, "rna_Stereo3dFormat_update");
- 
-   prop = RNA_def_property(srna, "use_sidebyside_crosseyed", PROP_BOOLEAN, PROP_BOOLEAN);
-   RNA_def_property_boolean_sdna(prop, NULL, "flag", S3D_SIDEBYSIDE_CROSSEYED);
-   RNA_def_property_ui_text(prop, "Cross-Eyed", "Right eye should see left image and vice versa");
-   RNA_def_property_update(prop, NC_IMAGE | ND_DISPLAY, "rna_Stereo3dFormat_update");
- 
-   prop = RNA_def_property(srna, "use_squeezed_frame", PROP_BOOLEAN, PROP_BOOLEAN);
-   RNA_def_property_boolean_sdna(prop, NULL, "flag", S3D_SQUEEZED_FRAME);
-   RNA_def_property_ui_text(prop, "Squeezed Frame", "Combine both views in a squeezed image");
-   RNA_def_property_update(prop, NC_IMAGE | ND_DISPLAY, "rna_Stereo3dFormat_update");
- }
- 
- /* use for render output and image save operator,
-  * note: there are some cases where the members act differently when this is
-  * used from a scene, video formats can only be selected for render output
-  * for example, this is checked by seeing if the ptr->owner_id is a Scene id */
- 
- static void rna_def_scene_image_format_data(BlenderRNA *brna)
- {
- 
- #  ifdef WITH_OPENJPEG
-   static const EnumPropertyItem jp2_codec_items[] = {
-       {R_IMF_JP2_CODEC_JP2, "JP2", 0, "JP2", ""},
-       {R_IMF_JP2_CODEC_J2K, "J2K", 0, "J2K", ""},
-       {0, NULL, 0, NULL, NULL},
-   };
- #  endif
- 
- #  ifdef WITH_TIFF
-   static const EnumPropertyItem tiff_codec_items[] = {
-       {R_IMF_TIFF_CODEC_NONE, "NONE", 0, "None", ""},
-       {R_IMF_TIFF_CODEC_DEFLATE, "DEFLATE", 0, "Deflate", ""},
-       {R_IMF_TIFF_CODEC_LZW, "LZW", 0, "LZW", ""},
-       {R_IMF_TIFF_CODEC_PACKBITS, "PACKBITS", 0, "Pack Bits", ""},
-       {0, NULL, 0, NULL, NULL},
-   };
- #  endif
- 
-   StructRNA *srna;
-   PropertyRNA *prop;
- 
-   rna_def_image_format_stereo3d_format(brna);
- 
-   srna = RNA_def_struct(brna, "ImageFormatSettings", NULL);
-   RNA_def_struct_sdna(srna, "ImageFormatData");
-   RNA_def_struct_nested(brna, srna, "Scene");
-   RNA_def_struct_path_func(srna, "rna_ImageFormatSettings_path");
-   RNA_def_struct_ui_text(srna, "Image Format", "Settings for image formats");
- 
-   prop = RNA_def_property(srna, "file_format", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_sdna(prop, NULL, "imtype");
-   RNA_def_property_enum_items(prop, rna_enum_image_type_items);
-   RNA_def_property_enum_funcs(prop,
-                               NULL,
-                               "rna_ImageFormatSettings_file_format_set",
-                               "rna_ImageFormatSettings_file_format_itemf");
-   RNA_def_property_ui_text(prop, "File Format", "File format to save the rendered images as");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "color_mode", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_bitflag_sdna(prop, NULL, "planes");
-   RNA_def_property_enum_items(prop, rna_enum_image_color_mode_items);
-   RNA_def_property_enum_funcs(prop, NULL, NULL, "rna_ImageFormatSettings_color_mode_itemf");
-   RNA_def_property_ui_text(
-       prop,
-       "Color Mode",
-       "Choose BW for saving grayscale images, RGB for saving red, green and blue channels, "
-       "and RGBA for saving red, green, blue and alpha channels");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "color_depth", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_bitflag_sdna(prop, NULL, "depth");
-   RNA_def_property_enum_items(prop, rna_enum_image_color_depth_items);
-   RNA_def_property_enum_funcs(prop, NULL, NULL, "rna_ImageFormatSettings_color_depth_itemf");
-   RNA_def_property_ui_text(prop, "Color Depth", "Bit depth per channel");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   /* was 'file_quality' */
-   prop = RNA_def_property(srna, "quality", PROP_INT, PROP_PERCENTAGE);
-   RNA_def_property_int_sdna(prop, NULL, "quality");
-   RNA_def_property_range(prop, 0, 100); /* 0 is needed for compression. */
-   RNA_def_property_ui_text(
-       prop, "Quality", "Quality for image formats that support lossy compression");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   /* was shared with file_quality */
-   prop = RNA_def_property(srna, "compression", PROP_INT, PROP_PERCENTAGE);
-   RNA_def_property_int_sdna(prop, NULL, "compress");
-   RNA_def_property_range(prop, 0, 100); /* 0 is needed for compression. */
-   RNA_def_property_ui_text(prop,
-                            "Compression",
-                            "Amount of time to determine best compression: "
-                            "0 = no compression with fast file output, "
-                            "100 = maximum lossless compression with slow file output");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   /* flag */
-   prop = RNA_def_property(srna, "use_zbuffer", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "flag", R_IMF_FLAG_ZBUF);
-   RNA_def_property_ui_text(
-       prop, "Z Buffer", "Save the z-depth per pixel (32-bit unsigned integer z-buffer)");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "use_preview", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "flag", R_IMF_FLAG_PREVIEW_JPG);
-   RNA_def_property_ui_text(
-       prop, "Preview", "When rendering animations, save JPG preview images in same directory");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   /* format specific */
- 
- #  ifdef WITH_OPENEXR
-   /* OpenEXR */
- 
-   prop = RNA_def_property(srna, "exr_codec", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_sdna(prop, NULL, "exr_codec");
-   RNA_def_property_enum_items(prop, rna_enum_exr_codec_items);
-   RNA_def_property_enum_funcs(prop, NULL, NULL, "rna_ImageFormatSettings_exr_codec_itemf");
-   RNA_def_property_ui_text(prop, "Codec", "Codec settings for OpenEXR");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- #  endif
- 
- #  ifdef WITH_OPENJPEG
-   /* Jpeg 2000 */
-   prop = RNA_def_property(srna, "use_jpeg2k_ycc", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "jp2_flag", R_IMF_JP2_FLAG_YCC);
-   RNA_def_property_ui_text(
-       prop, "YCC", "Save luminance-chrominance-chrominance channels instead of RGB colors");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "use_jpeg2k_cinema_preset", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "jp2_flag", R_IMF_JP2_FLAG_CINE_PRESET);
-   RNA_def_property_ui_text(prop, "Cinema", "Use Openjpeg Cinema Preset");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "use_jpeg2k_cinema_48", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "jp2_flag", R_IMF_JP2_FLAG_CINE_48);
-   RNA_def_property_ui_text(prop, "Cinema (48)", "Use Openjpeg Cinema Preset (48fps)");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "jpeg2k_codec", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_sdna(prop, NULL, "jp2_codec");
-   RNA_def_property_enum_items(prop, jp2_codec_items);
-   RNA_def_property_ui_text(prop, "Codec", "Codec settings for Jpeg2000");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- #  endif
- 
- #  ifdef WITH_TIFF
-   /* TIFF */
-   prop = RNA_def_property(srna, "tiff_codec", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_sdna(prop, NULL, "tiff_codec");
-   RNA_def_property_enum_items(prop, tiff_codec_items);
-   RNA_def_property_ui_text(prop, "Compression", "Compression mode for TIFF");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- #  endif
- 
-   /* Cineon and DPX */
- 
-   prop = RNA_def_property(srna, "use_cineon_log", PROP_BOOLEAN, PROP_NONE);
-   RNA_def_property_boolean_sdna(prop, NULL, "cineon_flag", R_IMF_CINEON_FLAG_LOG);
-   RNA_def_property_ui_text(prop, "Log", "Convert to logarithmic color space");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "cineon_black", PROP_INT, PROP_NONE);
-   RNA_def_property_int_sdna(prop, NULL, "cineon_black");
-   RNA_def_property_range(prop, 0, 1024);
-   RNA_def_property_ui_text(prop, "B", "Log conversion reference blackpoint");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "cineon_white", PROP_INT, PROP_NONE);
-   RNA_def_property_int_sdna(prop, NULL, "cineon_white");
-   RNA_def_property_range(prop, 0, 1024);
-   RNA_def_property_ui_text(prop, "W", "Log conversion reference whitepoint");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "cineon_gamma", PROP_FLOAT, PROP_NONE);
-   RNA_def_property_float_sdna(prop, NULL, "cineon_gamma");
-   RNA_def_property_range(prop, 0.0f, 10.0f);
-   RNA_def_property_ui_text(prop, "G", "Log conversion gamma");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   /* multiview */
-   prop = RNA_def_property(srna, "views_format", PROP_ENUM, PROP_NONE);
-   RNA_def_property_enum_sdna(prop, NULL, "views_format");
-   RNA_def_property_enum_items(prop, rna_enum_views_format_items);
-   RNA_def_property_enum_funcs(prop, NULL, NULL, "rna_ImageFormatSettings_views_format_itemf");
-   RNA_def_property_ui_text(prop, "Views Format", "Format of multiview media");
-   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
- 
-   prop = RNA_def_property(srna, "stereo_3d_format", PROP_POINTER, PROP_NONE);
-   RNA_def_property_pointer_sdna(prop, NULL, "stereo3d_format");
-   RNA_def_property_flag(prop, PROP_NEVER_NULL);
-   RNA_def_property_struct_type(prop, "Stereo3dFormat");
-   RNA_def_property_ui_text(prop, "Stereo 3D Format", "Settings for stereo 3D");
- 
-   /* color management */
-   prop = RNA_def_property(srna, "view_settings", PROP_POINTER, PROP_NONE);
-   RNA_def_property_pointer_sdna(prop, NULL, "view_settings");
-   RNA_def_property_struct_type(prop, "ColorManagedViewSettings");
-   RNA_def_property_ui_text(
-       prop, "View Settings", "Color management settings applied on image before saving");
- 
-   prop = RNA_def_property(srna, "display_settings", PROP_POINTER, PROP_NONE);
-   RNA_def_property_pointer_sdna(prop, NULL, "display_settings");
-   RNA_def_property_struct_type(prop, "ColorManagedDisplaySettings");
-   RNA_def_property_ui_text(
-       prop, "Display Settings", "Settings of device saved image would be displayed on");
- }
- 
- static void rna_def_scene_ffmpeg_settings(BlenderRNA *brna)
- {
-   StructRNA *srna;
-   PropertyRNA *prop;
- 
- #  ifdef WITH_FFMPEG
-   /* Container types */
-   static const EnumPropertyItem ffmpeg_format_items[] = {
-       {FFMPEG_MPEG1, "MPEG1", 0, "MPEG-1", ""},
-       {FFMPEG_MPEG2, "MPEG2", 0, "MPEG-2", ""},
-       {FFMPEG_MPEG4, "MPEG4", 0, "MPEG-4", ""},
-       {FFMPEG_AVI, "AVI", 0, "AVI", ""},
-       {FFMPEG_MOV, "QUICKTIME", 0, "Quicktime", ""},
-       {FFMPEG_DV, "DV", 0, "DV", ""},
-       {FFMPEG_OGG, "OGG", 0, "Ogg", ""},
-       {FFMPEG_MKV, "MKV", 0, "Matroska", ""},
-       {FFMPEG_FLV, "FLASH", 0, "Flash", ""},
-       {FFMPEG_WEBM, "WEBM", 0, "WebM", ""},
-       {0, NULL, 0, NULL, NULL},
-   };
- 
-   static const EnumPropertyItem ffmpeg_codec_items[] = {
-       {AV_CODEC_ID_NONE, "NONE", 0, "No Video", "Disables video output, for audio-only renders"},
-       {AV_CODEC_ID_DNXHD, "DNXHD", 0, "DNxHD", ""},
-       {AV_CODEC_ID_DVVIDEO, "DV", 0, "DV", ""},
-       {AV_CODEC_ID_FFV1, "FFV1", 0, "FFmpeg video codec #1", ""},
-       {AV_CODEC_ID_FLV1, "FLASH", 0, "Flash Video", ""},
-       {AV_CODEC_ID_H264, "H264", 0, "H.264", ""},
-       {AV_CODEC_ID_HUFFYUV, "HUFFYUV", 0, "HuffYUV", ""},
-       {AV_CODEC_ID_MPEG1VIDEO, "MPEG1", 0, "MPEG-1", ""},
-       {AV_CODEC_ID_MPEG2VIDEO, "MPEG2", 0, "MPEG-2", ""},
-       {AV_CODEC_ID_MPEG4, "MPEG4", 0, "MPEG-4 (divx)", ""},
-       {AV_CODEC_ID_PNG, "PNG", 0, "PNG", ""},
-       {AV_CODEC_ID_QTRLE, "QTRLE", 0, "QT rle / QT Animation", ""},
-       {AV_CODEC_ID_THEORA, "THEORA", 0, "Theora", ""},
-       {AV_CODEC_ID_VP9, "WEBM", 0, "WEBM / VP9", ""},
-       {0, NULL, 0, NULL, NULL},
-   };
- 
-   /* Recommendations come from the FFmpeg wiki, https://trac.ffmpeg.org/wiki/Encode/VP9.
-    * The label for BEST has been changed to "Slowest" so that it fits the "Encoding Speed"
-    * property label in the UI. */
-   static const EnumPropertyItem ffmpeg_preset_items[] = {
-       {FFM_PRESET_BEST,
-        "BEST",
-        0,
-        "Slowest",
-        "Recommended if you have lots of time and want the best compression efficiency"},
-       {FFM_PRESET_GOOD, "GOOD", 0, "Good", "The default and recommended for most applications"},
-       {FFM_PRESET_REALTIME, "REALTIME", 0, "Realtime", "Recommended for fast encoding"},
-       {0, NULL, 0, NULL, NULL},
-   };
- 
-   static const EnumPropertyItem ffmpeg_crf_items[] = {
-       {FFM_CRF_NONE,
-        "NONE",
-        0,
-        "Constant Bitrate",
-        "Configure constant bit rate, rather than constant output quality"},
-       {FFM_CRF_LOSSLESS, "LOSSLESS", 0, "Lossless", ""},
-       {FFM_CRF_PERC_LOSSLESS, "PERC_LOSSLESS", 0, "Perceptually Lossless", ""},
-       {FFM_CRF_HIGH, "HIGH", 0, "High Quality", ""},
-       {FFM_CRF_MEDIUM, "MEDIUM", 0, "Medium Quality", ""},
-       {FFM_CRF_LOW, "LOW", 0, "Low Quality", ""},
-       {FFM_CRF_VERYLOW, "VERYLOW", 0, "Very Low Quality", ""},
-       {FFM_CRF_LOWEST, "LOWEST", 0, "Lowest Quality", ""},
-       {0, NULL, 0, NULL, NULL},
-   };
- 
-   static const EnumPropertyItem ffmpeg_audio_codec_items[] = {
-       {AV_CODEC_ID_NONE, "NONE", 0, "No Audio", "Disables audio output, for video-only renders"},
-       {AV_CODEC_ID_AAC, "AAC", 0, "AAC", ""},
-       {AV_CODEC_ID_AC3, "AC3", 0, "AC3", ""},
