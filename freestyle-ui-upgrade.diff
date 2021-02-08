@@ -1,8 +1,228 @@
+diff --git a/release/scripts/presets/linestyle/Brush.py b/release/scripts/presets/linestyle/Brush.py
+new file mode 100644
+index 00000000000..3873b206d10
+--- /dev/null
++++ b/release/scripts/presets/linestyle/Brush.py
+@@ -0,0 +1,17 @@
++import bpy
++from mathutils import Vector
++
++linestyle = bpy.data.linestyles.new(name="Brush")
++
++mod1 = linestyle.thickness_modifiers.new(
++    name="Along Stroke", type='ALONG_STROKE')
++mod1.mapping = 'CURVE'
++mod1.value_min = 2.0
++mod1.value_max = 10.0
++mod1.curve.curves[0].points[1].location = Vector((1., 0.))
++mod1.curve.curves[0].points.new(0.5, 1.0)
++mod1.curve.update()
++
++linestyle.geometry_modifiers.new(name="Bezier Curve", type="BEZIER_CURVE")
++
++bpy.context.view_layer.freestyle_settings.linesets.active.linestyle = linestyle
+diff --git a/release/scripts/presets/linestyle/Doodle.py b/release/scripts/presets/linestyle/Doodle.py
+new file mode 100644
+index 00000000000..266563424d5
+--- /dev/null
++++ b/release/scripts/presets/linestyle/Doodle.py
+@@ -0,0 +1,24 @@
++import bpy
++from mathutils import Vector
++
++linestyle = bpy.data.linestyles.new(name="Doodle")
++linestyle.chaining = 'SKETCHY'
++linestyle.use_same_object = False
++
++linestyle.alpha = 0.910714
++linestyle.thickness = 2.0
++
++linestyle.geometry_modifiers["Sampling"].sampling = 2.0
++
++mod1 = linestyle.geometry_modifiers.new(name="2D Offset", type='2D_OFFSET')
++mod1.start = 5.0
++mod1.end = 2.0
++mod1.x = -0.1
++mod1.y = 0.2
++
++mod2 = linestyle.geometry_modifiers.new(
++    name="Spatial Noise", type='SPATIAL_NOISE')
++mod2.amplitude = 1.5
++mod2.scale = 10.0
++
++bpy.context.view_layer.freestyle_settings.linesets.active.linestyle = linestyle
+diff --git a/release/scripts/presets/linestyle/Generic_Tapered.py b/release/scripts/presets/linestyle/Generic_Tapered.py
+new file mode 100644
+index 00000000000..48704537130
+--- /dev/null
++++ b/release/scripts/presets/linestyle/Generic_Tapered.py
+@@ -0,0 +1,20 @@
++import bpy
++from mathutils import Vector, Color
++
++linestyle = bpy.data.linestyles.new(name="Generic Tapered")
++linestyle.geometry_modifiers['Sampling'].sampling = 1.0
++
++mod1 = linestyle.thickness_modifiers.new(
++    name="Along Stroke", type='ALONG_STROKE')
++mod1.mapping = 'CURVE'
++mod1.value_min = 1.0
++mod1.value_max = 3.0
++mod1.curve.curves[0].points[1].location = Vector((1., 0.))
++mod1.curve.curves[0].points.new(0.5, 1.0)
++mod1.curve.update()
++
++mod2 = linestyle.geometry_modifiers.new(
++    name="Bezier Curve", type='BEZIER_CURVE')
++mod2.error = 1.0
++
++bpy.context.view_layer.freestyle_settings.linesets.active.linestyle = linestyle
+diff --git a/release/scripts/presets/linestyle/Invisible_Lines.py b/release/scripts/presets/linestyle/Invisible_Lines.py
+new file mode 100644
+index 00000000000..2ea49b1a468
+--- /dev/null
++++ b/release/scripts/presets/linestyle/Invisible_Lines.py
+@@ -0,0 +1,10 @@
++import bpy
++from mathutils import Vector, Color
++
++linestyle = bpy.data.linestyles.new(name="Invisible Lines")
++linestyle.caps = 'ROUND'
++linestyle.use_dashed_line = True
++linestyle.dash1 = 8
++linestyle.gap1 = 5
++
++bpy.context.view_layer.freestyle_settings.linesets.active.linestyle = linestyle
+diff --git a/release/scripts/presets/linestyle/Noisy.py b/release/scripts/presets/linestyle/Noisy.py
+new file mode 100644
+index 00000000000..9f416409178
+--- /dev/null
++++ b/release/scripts/presets/linestyle/Noisy.py
+@@ -0,0 +1,22 @@
++import bpy
++from mathutils import Vector, Color
++
++linestyle = bpy.data.linestyles.new(name="Noisy")
++linestyle.use_chaining = False
++
++linestyle.use_split_pattern = True
++linestyle.split_dash1 = 4
++linestyle.split_gap1 = 4
++
++linestyle.use_dashed_line = True
++linestyle.dash1 = 4
++linestyle.gap1 = 4
++
++linestyle.geometry_modifiers['Sampling'].sampling = 1.0
++
++mod1 = linestyle.geometry_modifiers.new(name="Blueprint", type="BLUEPRINT")
++mod1.shape = 'SQUARES'
++mod1.backbone_length = 0.0
++mod1.random_backbone = 2
++
++bpy.context.view_layer.freestyle_settings.linesets.active.linestyle = linestyle
+diff --git a/release/scripts/presets/linestyle/Pen.py b/release/scripts/presets/linestyle/Pen.py
+new file mode 100644
+index 00000000000..3f2a1055ce6
+--- /dev/null
++++ b/release/scripts/presets/linestyle/Pen.py
+@@ -0,0 +1,19 @@
++import bpy
++from mathutils import Vector, Color
++
++linestyle = bpy.data.linestyles.new(name="Pen")
++linestyle.caps = 'ROUND'
++linestyle.chaining = 'SKETCHY'
++linestyle.rounds = 2
++linestyle.color = Color((0.002428, 0.016807, 0.06301))
++
++mod1 = linestyle.thickness_modifiers.new(
++    name="Calligraphy", type="CALLIGRAPHY")
++mod1.thickness_max = 5.0
++
++linestyle.geometry_modifiers['Sampling'].sampling = 1.0
++
++linestyle.geometry_modifiers.new(name="Bezier Curve", type="BEZIER_CURVE")
++linestyle.geometry_modifiers.new(name="Tip Remover", type="TIP_REMOVER")
++
++bpy.context.view_layer.freestyle_settings.linesets.active.linestyle = linestyle
+diff --git a/release/scripts/presets/linestyle/Pencil.py b/release/scripts/presets/linestyle/Pencil.py
+new file mode 100644
+index 00000000000..d7a4dfa36d6
+--- /dev/null
++++ b/release/scripts/presets/linestyle/Pencil.py
+@@ -0,0 +1,26 @@
++import bpy
++from mathutils import Vector
++
++linestyle = bpy.data.linestyles.new(name="Pencil")
++linestyle.caps = 'ROUND'
++linestyle.chaining = 'SKETCHY'
++linestyle.rounds = 2
++linestyle.alpha = 0.9
++
++mod1 = linestyle.thickness_modifiers.new(
++    name="Along Stroke", type='ALONG_STROKE')
++mod1.mapping = 'CURVE'
++mod1.value_min = 2.0
++mod1.value_max = 3.0
++mod1.curve.curves[0].points[1].location = Vector((1., 0.))
++mod1.curve.curves[0].points.new(0.5, 1.0)
++mod1.curve.update()
++
++linestyle.geometry_modifiers['Sampling'].sampling = 1.0
++
++mod2 = linestyle.geometry_modifiers.new(
++    name="Perlin Noise 2D", type='PERLIN_NOISE_2D')
++mod2.frequency = 10.0
++mod2.amplitude = 0.8
++
++bpy.context.view_layer.freestyle_settings.linesets.active.linestyle = linestyle
+diff --git a/release/scripts/presets/linestyle/Thick_Joins.py b/release/scripts/presets/linestyle/Thick_Joins.py
+new file mode 100644
+index 00000000000..bff844f2aad
+--- /dev/null
++++ b/release/scripts/presets/linestyle/Thick_Joins.py
+@@ -0,0 +1,21 @@
++import bpy
++from mathutils import Vector
++
++linestyle = bpy.data.linestyles.new(name="Thick Joins")
++linestyle.caps = 'ROUND'
++linestyle.use_chaining = False
++
++mod1 = linestyle.thickness_modifiers.new(
++    name="Along Stroke", type='ALONG_STROKE')
++mod1.mapping = 'CURVE'
++mod1.value_min = 2.0
++mod1.value_max = 5.0
++
++mod1.curve.curves[0].points[0].location = Vector((0., 1.))
++mod1.curve.curves[0].points[1].location = Vector((1., 1.))
++mod1.curve.curves[0].points.new(0.1, 0.5)
++mod1.curve.curves[0].points.new(0.5, 0.0)
++mod1.curve.curves[0].points.new(0.9, 0.5)
++mod1.curve.update()
++
++bpy.context.view_layer.freestyle_settings.linesets.active.linestyle = linestyle
 diff --git a/release/scripts/startup/bl_ui/properties_freestyle.py b/release/scripts/startup/bl_ui/properties_freestyle.py
-index fd12747e2fa..bd95e739e7b 100644
+index fd12747e2fa..9357e74ff2b 100644
 --- a/release/scripts/startup/bl_ui/properties_freestyle.py
 +++ b/release/scripts/startup/bl_ui/properties_freestyle.py
-@@ -26,7 +26,7 @@ from bpy.types import Menu, Panel, UIList
+@@ -19,14 +19,20 @@
+ # <pep8 compliant>
+ import bpy
+ from bpy.types import Menu, Panel, UIList
++from bl_ui.utils import PresetPanel
+ 
+ 
++class VIEWLAYER_PT_linestyle_presets(PresetPanel, Panel):
++    bl_label = "LineStyle Presets"
++    preset_subdir = "linestyle"
++    preset_operator = "script.python_file_run"
++
+ # Render properties
+ 
  class RenderFreestyleButtonsPanel:
      bl_space_type = 'PROPERTIES'
      bl_region_type = 'WINDOW'
@@ -11,7 +231,7 @@ index fd12747e2fa..bd95e739e7b 100644
      # COMPAT_ENGINES must be defined in each subclass, external engines can add themselves here
  
      @classmethod
-@@ -37,7 +37,8 @@ class RenderFreestyleButtonsPanel:
+@@ -37,7 +43,8 @@ class RenderFreestyleButtonsPanel:
  
  
  class RENDER_PT_freestyle(RenderFreestyleButtonsPanel, Panel):
@@ -21,7 +241,7 @@ index fd12747e2fa..bd95e739e7b 100644
      bl_options = {'DEFAULT_CLOSED'}
      bl_order = 10
      COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
-@@ -51,11 +52,15 @@ class RENDER_PT_freestyle(RenderFreestyleButtonsPanel, Panel):
+@@ -51,11 +58,15 @@ class RENDER_PT_freestyle(RenderFreestyleButtonsPanel, Panel):
          layout.use_property_split = True
          layout.use_property_decorate = False  # No animation.
  
@@ -38,7 +258,7 @@ index fd12747e2fa..bd95e739e7b 100644
  
          if rd.line_thickness_mode == 'ABSOLUTE':
              layout.prop(rd, "line_thickness")
-@@ -88,14 +93,55 @@ class ViewLayerFreestyleEditorButtonsPanel(ViewLayerFreestyleButtonsPanel):
+@@ -88,14 +99,55 @@ class ViewLayerFreestyleEditorButtonsPanel(ViewLayerFreestyleButtonsPanel):
          if not super().poll(context):
              return False
          view_layer = context.view_layer
@@ -96,7 +316,7 @@ index fd12747e2fa..bd95e739e7b 100644
              layout.prop(lineset, "show_render", text="", index=index)
          elif self.layout_type == 'GRID':
              layout.alignment = 'CENTER'
-@@ -126,54 +172,61 @@ class VIEWLAYER_PT_freestyle(ViewLayerFreestyleButtonsPanel, Panel):
+@@ -126,54 +178,61 @@ class VIEWLAYER_PT_freestyle(ViewLayerFreestyleButtonsPanel, Panel):
  
      def draw(self, context):
          layout = self.layout
@@ -180,7 +400,7 @@ index fd12747e2fa..bd95e739e7b 100644
  
  
  class VIEWLAYER_PT_freestyle_lineset(ViewLayerFreestyleEditorButtonsPanel, Panel):
-@@ -199,7 +252,6 @@ class VIEWLAYER_PT_freestyle_lineset(ViewLayerFreestyleEditorButtonsPanel, Panel
+@@ -199,7 +258,6 @@ class VIEWLAYER_PT_freestyle_lineset(ViewLayerFreestyleEditorButtonsPanel, Panel
          lineset = freestyle.linesets.active
  
          layout.active = view_layer.use_freestyle
@@ -188,7 +408,7 @@ index fd12747e2fa..bd95e739e7b 100644
          row = layout.row()
          rows = 4 if lineset else 2
          row.template_list(
-@@ -215,146 +267,559 @@ class VIEWLAYER_PT_freestyle_lineset(ViewLayerFreestyleEditorButtonsPanel, Panel
+@@ -215,146 +273,562 @@ class VIEWLAYER_PT_freestyle_lineset(ViewLayerFreestyleEditorButtonsPanel, Panel
          sub = row.column(align=True)
          sub.operator("scene.freestyle_lineset_add", icon='ADD', text="")
          sub.operator("scene.freestyle_lineset_remove", icon='REMOVE', text="")
@@ -509,6 +729,9 @@ index fd12747e2fa..bd95e739e7b 100644
 +
 +class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleLineStyle, Panel):
      bl_label = "Freestyle Line Style"
++
++    def draw_header_preset(self, _context):
++        VIEWLAYER_PT_linestyle_presets.draw_panel_header(self.layout)
 +
 +    def draw(self, context):
 +        layout = self.layout
@@ -861,7 +1084,7 @@ index fd12747e2fa..bd95e739e7b 100644
                  prop = box.operator("scene.freestyle_fill_range_by_selection")
                  prop.type = 'COLOR'
                  prop.name = modifier.name
-@@ -371,117 +836,191 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
+@@ -371,117 +845,191 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
                      sub.active = False
                      show_ramp = True
                  if show_ramp:
@@ -1076,7 +1299,7 @@ index fd12747e2fa..bd95e739e7b 100644
  
              elif modifier.type == 'CALLIGRAPHY':
                  box.prop(modifier, "orientation")
-@@ -490,7 +1029,7 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
+@@ -490,7 +1038,7 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
                  row.prop(modifier, "thickness_max")
  
              elif modifier.type == 'TANGENT':
@@ -1085,7 +1308,7 @@ index fd12747e2fa..bd95e739e7b 100644
                  self.mapping = 'CURVE'
                  row = box.row(align=True)
                  row.prop(modifier, "thickness_min")
-@@ -505,7 +1044,7 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
+@@ -505,7 +1053,7 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
                  row.prop(modifier, "use_asymmetric")
  
              elif modifier.type == 'CREASE_ANGLE':
@@ -1094,7 +1317,7 @@ index fd12747e2fa..bd95e739e7b 100644
                  row = box.row(align=True)
                  row.prop(modifier, "thickness_min")
                  row.prop(modifier, "thickness_max")
-@@ -514,7 +1053,7 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
+@@ -514,7 +1062,7 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
                  row.prop(modifier, "angle_max")
  
              elif modifier.type == 'CURVATURE_3D':
@@ -1103,7 +1326,7 @@ index fd12747e2fa..bd95e739e7b 100644
                  row = box.row(align=True)
                  row.prop(modifier, "thickness_min")
                  row.prop(modifier, "thickness_max")
-@@ -524,13 +1063,60 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
+@@ -524,13 +1072,60 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
                  freestyle = context.view_layer.freestyle_settings
                  if not freestyle.use_smoothness:
                      message = "Enable Face Smoothness to use this modifier"
@@ -1166,7 +1389,7 @@ index fd12747e2fa..bd95e739e7b 100644
          if modifier.expanded:
              box = col.box()
  
-@@ -628,6 +1214,8 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
+@@ -628,6 +1223,8 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
  
      def draw(self, context):
          layout = self.layout
@@ -1175,7 +1398,7 @@ index fd12747e2fa..bd95e739e7b 100644
  
          view_layer = context.view_layer
          lineset = view_layer.freestyle_settings.linesets.active
-@@ -638,177 +1226,60 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
+@@ -638,177 +1235,60 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
              return
          linestyle = lineset.linestyle
  
@@ -1398,7 +1621,13 @@ index fd12747e2fa..bd95e739e7b 100644
  
  
  # Material properties
-@@ -851,7 +1322,23 @@ classes = (
+@@ -846,12 +1326,29 @@ class MATERIAL_PT_freestyle_line(MaterialFreestyleButtonsPanel, Panel):
+ 
+ 
+ classes = (
++    VIEWLAYER_PT_linestyle_presets,
+     RENDER_PT_freestyle,
+     VIEWLAYER_UL_linesets,
      RENDER_MT_lineset_context_menu,
      VIEWLAYER_PT_freestyle,
      VIEWLAYER_PT_freestyle_lineset,
@@ -1423,7 +1652,7 @@ index fd12747e2fa..bd95e739e7b 100644
  )
  
 diff --git a/source/blender/makesrna/intern/rna_scene.c b/source/blender/makesrna/intern/rna_scene.c
-index af31f16f4e0..9f32393eb05 100644
+index 58a89b7ffdc..bcd7b3b00a9 100644
 --- a/source/blender/makesrna/intern/rna_scene.c
 +++ b/source/blender/makesrna/intern/rna_scene.c
 @@ -4724,7 +4724,7 @@ void rna_def_freestyle_settings(BlenderRNA *brna)
