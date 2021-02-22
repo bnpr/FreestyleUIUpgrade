@@ -1,13 +1,14 @@
 diff --git a/release/scripts/presets/linestyle/Brush.py b/release/scripts/presets/linestyle/Brush.py
 new file mode 100644
-index 00000000000..3873b206d10
+index 00000000000..d6424465613
 --- /dev/null
 +++ b/release/scripts/presets/linestyle/Brush.py
-@@ -0,0 +1,17 @@
+@@ -0,0 +1,18 @@
 +import bpy
-+from mathutils import Vector
++from mathutils import Vector, Color
 +
 +linestyle = bpy.data.linestyles.new(name="Brush")
++linestyle.color = Color((0.010022, 0.005649, 0.002323))
 +
 +mod1 = linestyle.thickness_modifiers.new(
 +    name="Along Stroke", type='ALONG_STROKE')
@@ -23,16 +24,17 @@ index 00000000000..3873b206d10
 +bpy.context.view_layer.freestyle_settings.linesets.active.linestyle = linestyle
 diff --git a/release/scripts/presets/linestyle/Doodle.py b/release/scripts/presets/linestyle/Doodle.py
 new file mode 100644
-index 00000000000..266563424d5
+index 00000000000..16d07e45a8e
 --- /dev/null
 +++ b/release/scripts/presets/linestyle/Doodle.py
-@@ -0,0 +1,24 @@
+@@ -0,0 +1,25 @@
 +import bpy
-+from mathutils import Vector
++from mathutils import Vector, Color
 +
 +linestyle = bpy.data.linestyles.new(name="Doodle")
 +linestyle.chaining = 'SKETCHY'
 +linestyle.use_same_object = False
++linestyle.color = Color((0.004896, 0.002294, 0.000000))
 +
 +linestyle.alpha = 0.910714
 +linestyle.thickness = 2.0
@@ -53,15 +55,16 @@ index 00000000000..266563424d5
 +bpy.context.view_layer.freestyle_settings.linesets.active.linestyle = linestyle
 diff --git a/release/scripts/presets/linestyle/Generic_Tapered.py b/release/scripts/presets/linestyle/Generic_Tapered.py
 new file mode 100644
-index 00000000000..48704537130
+index 00000000000..92d8e84790f
 --- /dev/null
 +++ b/release/scripts/presets/linestyle/Generic_Tapered.py
-@@ -0,0 +1,20 @@
+@@ -0,0 +1,21 @@
 +import bpy
 +from mathutils import Vector, Color
 +
 +linestyle = bpy.data.linestyles.new(name="Generic Tapered")
 +linestyle.geometry_modifiers['Sampling'].sampling = 1.0
++linestyle.color = Color((0.004896, 0.004577, 0.004409))
 +
 +mod1 = linestyle.thickness_modifiers.new(
 +    name="Along Stroke", type='ALONG_STROKE')
@@ -79,14 +82,15 @@ index 00000000000..48704537130
 +bpy.context.view_layer.freestyle_settings.linesets.active.linestyle = linestyle
 diff --git a/release/scripts/presets/linestyle/Invisible_Lines.py b/release/scripts/presets/linestyle/Invisible_Lines.py
 new file mode 100644
-index 00000000000..2ea49b1a468
+index 00000000000..e70031a9512
 --- /dev/null
 +++ b/release/scripts/presets/linestyle/Invisible_Lines.py
-@@ -0,0 +1,10 @@
+@@ -0,0 +1,11 @@
 +import bpy
 +from mathutils import Vector, Color
 +
 +linestyle = bpy.data.linestyles.new(name="Invisible Lines")
++linestyle.color = Color((0.000440, 0.002436, 0.004242))
 +linestyle.caps = 'ROUND'
 +linestyle.use_dashed_line = True
 +linestyle.dash1 = 8
@@ -95,15 +99,16 @@ index 00000000000..2ea49b1a468
 +bpy.context.view_layer.freestyle_settings.linesets.active.linestyle = linestyle
 diff --git a/release/scripts/presets/linestyle/Noisy.py b/release/scripts/presets/linestyle/Noisy.py
 new file mode 100644
-index 00000000000..9f416409178
+index 00000000000..a7d0cbcc207
 --- /dev/null
 +++ b/release/scripts/presets/linestyle/Noisy.py
-@@ -0,0 +1,22 @@
+@@ -0,0 +1,23 @@
 +import bpy
 +from mathutils import Vector, Color
 +
 +linestyle = bpy.data.linestyles.new(name="Noisy")
 +linestyle.use_chaining = False
++linestyle.color = Color((0.000440, 0.002436, 0.004242))
 +
 +linestyle.use_split_pattern = True
 +linestyle.split_dash1 = 4
@@ -148,18 +153,19 @@ index 00000000000..3f2a1055ce6
 +bpy.context.view_layer.freestyle_settings.linesets.active.linestyle = linestyle
 diff --git a/release/scripts/presets/linestyle/Pencil.py b/release/scripts/presets/linestyle/Pencil.py
 new file mode 100644
-index 00000000000..d7a4dfa36d6
+index 00000000000..f7d0ce6756b
 --- /dev/null
 +++ b/release/scripts/presets/linestyle/Pencil.py
-@@ -0,0 +1,26 @@
+@@ -0,0 +1,27 @@
 +import bpy
-+from mathutils import Vector
++from mathutils import Vector, Color
 +
 +linestyle = bpy.data.linestyles.new(name="Pencil")
 +linestyle.caps = 'ROUND'
 +linestyle.chaining = 'SKETCHY'
 +linestyle.rounds = 2
 +linestyle.alpha = 0.9
++linestyle.color = Color((0.046962, 0.046962, 0.046962))
 +
 +mod1 = linestyle.thickness_modifiers.new(
 +    name="Along Stroke", type='ALONG_STROKE')
@@ -180,16 +186,17 @@ index 00000000000..d7a4dfa36d6
 +bpy.context.view_layer.freestyle_settings.linesets.active.linestyle = linestyle
 diff --git a/release/scripts/presets/linestyle/Thick_Joins.py b/release/scripts/presets/linestyle/Thick_Joins.py
 new file mode 100644
-index 00000000000..bff844f2aad
+index 00000000000..56a0e4afd33
 --- /dev/null
 +++ b/release/scripts/presets/linestyle/Thick_Joins.py
-@@ -0,0 +1,21 @@
+@@ -0,0 +1,22 @@
 +import bpy
-+from mathutils import Vector
++from mathutils import Vector, Color
 +
 +linestyle = bpy.data.linestyles.new(name="Thick Joins")
 +linestyle.caps = 'ROUND'
 +linestyle.use_chaining = False
++linestyle.color = Color((0.005605, 0.005084, 0.004887))
 +
 +mod1 = linestyle.thickness_modifiers.new(
 +    name="Along Stroke", type='ALONG_STROKE')
@@ -1652,10 +1659,10 @@ index fd12747e2fa..9357e74ff2b 100644
  )
  
 diff --git a/source/blender/makesrna/intern/rna_scene.c b/source/blender/makesrna/intern/rna_scene.c
-index 58a89b7ffdc..bcd7b3b00a9 100644
+index 9479d15c2cc..b69270323e3 100644
 --- a/source/blender/makesrna/intern/rna_scene.c
 +++ b/source/blender/makesrna/intern/rna_scene.c
-@@ -4724,7 +4724,7 @@ void rna_def_freestyle_settings(BlenderRNA *brna)
+@@ -4743,7 +4743,7 @@ void rna_def_freestyle_settings(BlenderRNA *brna)
        {FREESTYLE_QI_RANGE,
         "RANGE",
         0,
