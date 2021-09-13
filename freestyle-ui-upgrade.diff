@@ -1,292 +1,63 @@
-diff --git a/release/scripts/presets/linestyle/Brush.py b/release/scripts/presets/linestyle/Brush.py
-new file mode 100644
-index 00000000000..d6424465613
---- /dev/null
-+++ b/release/scripts/presets/linestyle/Brush.py
-@@ -0,0 +1,18 @@
-+import bpy
-+from mathutils import Vector, Color
-+
-+linestyle = bpy.data.linestyles.new(name="Brush")
-+linestyle.color = Color((0.010022, 0.005649, 0.002323))
-+
-+mod1 = linestyle.thickness_modifiers.new(
-+    name="Along Stroke", type='ALONG_STROKE')
-+mod1.mapping = 'CURVE'
-+mod1.value_min = 2.0
-+mod1.value_max = 10.0
-+mod1.curve.curves[0].points[1].location = Vector((1., 0.))
-+mod1.curve.curves[0].points.new(0.5, 1.0)
-+mod1.curve.update()
-+
-+linestyle.geometry_modifiers.new(name="Bezier Curve", type="BEZIER_CURVE")
-+
-+bpy.context.view_layer.freestyle_settings.linesets.active.linestyle = linestyle
-diff --git a/release/scripts/presets/linestyle/Doodle.py b/release/scripts/presets/linestyle/Doodle.py
-new file mode 100644
-index 00000000000..16d07e45a8e
---- /dev/null
-+++ b/release/scripts/presets/linestyle/Doodle.py
-@@ -0,0 +1,25 @@
-+import bpy
-+from mathutils import Vector, Color
-+
-+linestyle = bpy.data.linestyles.new(name="Doodle")
-+linestyle.chaining = 'SKETCHY'
-+linestyle.use_same_object = False
-+linestyle.color = Color((0.004896, 0.002294, 0.000000))
-+
-+linestyle.alpha = 0.910714
-+linestyle.thickness = 2.0
-+
-+linestyle.geometry_modifiers["Sampling"].sampling = 2.0
-+
-+mod1 = linestyle.geometry_modifiers.new(name="2D Offset", type='2D_OFFSET')
-+mod1.start = 5.0
-+mod1.end = 2.0
-+mod1.x = -0.1
-+mod1.y = 0.2
-+
-+mod2 = linestyle.geometry_modifiers.new(
-+    name="Spatial Noise", type='SPATIAL_NOISE')
-+mod2.amplitude = 1.5
-+mod2.scale = 10.0
-+
-+bpy.context.view_layer.freestyle_settings.linesets.active.linestyle = linestyle
-diff --git a/release/scripts/presets/linestyle/Generic_Tapered.py b/release/scripts/presets/linestyle/Generic_Tapered.py
-new file mode 100644
-index 00000000000..92d8e84790f
---- /dev/null
-+++ b/release/scripts/presets/linestyle/Generic_Tapered.py
-@@ -0,0 +1,21 @@
-+import bpy
-+from mathutils import Vector, Color
-+
-+linestyle = bpy.data.linestyles.new(name="Generic Tapered")
-+linestyle.geometry_modifiers['Sampling'].sampling = 1.0
-+linestyle.color = Color((0.004896, 0.004577, 0.004409))
-+
-+mod1 = linestyle.thickness_modifiers.new(
-+    name="Along Stroke", type='ALONG_STROKE')
-+mod1.mapping = 'CURVE'
-+mod1.value_min = 1.0
-+mod1.value_max = 3.0
-+mod1.curve.curves[0].points[1].location = Vector((1., 0.))
-+mod1.curve.curves[0].points.new(0.5, 1.0)
-+mod1.curve.update()
-+
-+mod2 = linestyle.geometry_modifiers.new(
-+    name="Bezier Curve", type='BEZIER_CURVE')
-+mod2.error = 1.0
-+
-+bpy.context.view_layer.freestyle_settings.linesets.active.linestyle = linestyle
-diff --git a/release/scripts/presets/linestyle/Invisible_Lines.py b/release/scripts/presets/linestyle/Invisible_Lines.py
-new file mode 100644
-index 00000000000..e70031a9512
---- /dev/null
-+++ b/release/scripts/presets/linestyle/Invisible_Lines.py
-@@ -0,0 +1,11 @@
-+import bpy
-+from mathutils import Vector, Color
-+
-+linestyle = bpy.data.linestyles.new(name="Invisible Lines")
-+linestyle.color = Color((0.000440, 0.002436, 0.004242))
-+linestyle.caps = 'ROUND'
-+linestyle.use_dashed_line = True
-+linestyle.dash1 = 8
-+linestyle.gap1 = 5
-+
-+bpy.context.view_layer.freestyle_settings.linesets.active.linestyle = linestyle
-diff --git a/release/scripts/presets/linestyle/Noisy.py b/release/scripts/presets/linestyle/Noisy.py
-new file mode 100644
-index 00000000000..a7d0cbcc207
---- /dev/null
-+++ b/release/scripts/presets/linestyle/Noisy.py
-@@ -0,0 +1,23 @@
-+import bpy
-+from mathutils import Vector, Color
-+
-+linestyle = bpy.data.linestyles.new(name="Noisy")
-+linestyle.use_chaining = False
-+linestyle.color = Color((0.000440, 0.002436, 0.004242))
-+
-+linestyle.use_split_pattern = True
-+linestyle.split_dash1 = 4
-+linestyle.split_gap1 = 4
-+
-+linestyle.use_dashed_line = True
-+linestyle.dash1 = 4
-+linestyle.gap1 = 4
-+
-+linestyle.geometry_modifiers['Sampling'].sampling = 1.0
-+
-+mod1 = linestyle.geometry_modifiers.new(name="Blueprint", type="BLUEPRINT")
-+mod1.shape = 'SQUARES'
-+mod1.backbone_length = 0.0
-+mod1.random_backbone = 2
-+
-+bpy.context.view_layer.freestyle_settings.linesets.active.linestyle = linestyle
-diff --git a/release/scripts/presets/linestyle/Pen.py b/release/scripts/presets/linestyle/Pen.py
-new file mode 100644
-index 00000000000..3f2a1055ce6
---- /dev/null
-+++ b/release/scripts/presets/linestyle/Pen.py
-@@ -0,0 +1,19 @@
-+import bpy
-+from mathutils import Vector, Color
-+
-+linestyle = bpy.data.linestyles.new(name="Pen")
-+linestyle.caps = 'ROUND'
-+linestyle.chaining = 'SKETCHY'
-+linestyle.rounds = 2
-+linestyle.color = Color((0.002428, 0.016807, 0.06301))
-+
-+mod1 = linestyle.thickness_modifiers.new(
-+    name="Calligraphy", type="CALLIGRAPHY")
-+mod1.thickness_max = 5.0
-+
-+linestyle.geometry_modifiers['Sampling'].sampling = 1.0
-+
-+linestyle.geometry_modifiers.new(name="Bezier Curve", type="BEZIER_CURVE")
-+linestyle.geometry_modifiers.new(name="Tip Remover", type="TIP_REMOVER")
-+
-+bpy.context.view_layer.freestyle_settings.linesets.active.linestyle = linestyle
-diff --git a/release/scripts/presets/linestyle/Pencil.py b/release/scripts/presets/linestyle/Pencil.py
-new file mode 100644
-index 00000000000..f7d0ce6756b
---- /dev/null
-+++ b/release/scripts/presets/linestyle/Pencil.py
-@@ -0,0 +1,27 @@
-+import bpy
-+from mathutils import Vector, Color
-+
-+linestyle = bpy.data.linestyles.new(name="Pencil")
-+linestyle.caps = 'ROUND'
-+linestyle.chaining = 'SKETCHY'
-+linestyle.rounds = 2
-+linestyle.alpha = 0.9
-+linestyle.color = Color((0.046962, 0.046962, 0.046962))
-+
-+mod1 = linestyle.thickness_modifiers.new(
-+    name="Along Stroke", type='ALONG_STROKE')
-+mod1.mapping = 'CURVE'
-+mod1.value_min = 2.0
-+mod1.value_max = 3.0
-+mod1.curve.curves[0].points[1].location = Vector((1., 0.))
-+mod1.curve.curves[0].points.new(0.5, 1.0)
-+mod1.curve.update()
-+
-+linestyle.geometry_modifiers['Sampling'].sampling = 1.0
-+
-+mod2 = linestyle.geometry_modifiers.new(
-+    name="Perlin Noise 2D", type='PERLIN_NOISE_2D')
-+mod2.frequency = 10.0
-+mod2.amplitude = 0.8
-+
-+bpy.context.view_layer.freestyle_settings.linesets.active.linestyle = linestyle
-diff --git a/release/scripts/presets/linestyle/Thick_Joins.py b/release/scripts/presets/linestyle/Thick_Joins.py
-new file mode 100644
-index 00000000000..56a0e4afd33
---- /dev/null
-+++ b/release/scripts/presets/linestyle/Thick_Joins.py
-@@ -0,0 +1,22 @@
-+import bpy
-+from mathutils import Vector, Color
-+
-+linestyle = bpy.data.linestyles.new(name="Thick Joins")
-+linestyle.caps = 'ROUND'
-+linestyle.use_chaining = False
-+linestyle.color = Color((0.005605, 0.005084, 0.004887))
-+
-+mod1 = linestyle.thickness_modifiers.new(
-+    name="Along Stroke", type='ALONG_STROKE')
-+mod1.mapping = 'CURVE'
-+mod1.value_min = 2.0
-+mod1.value_max = 5.0
-+
-+mod1.curve.curves[0].points[0].location = Vector((0., 1.))
-+mod1.curve.curves[0].points[1].location = Vector((1., 1.))
-+mod1.curve.curves[0].points.new(0.1, 0.5)
-+mod1.curve.curves[0].points.new(0.5, 0.0)
-+mod1.curve.curves[0].points.new(0.9, 0.5)
-+mod1.curve.update()
-+
-+bpy.context.view_layer.freestyle_settings.linesets.active.linestyle = linestyle
 diff --git a/release/scripts/startup/bl_ui/properties_freestyle.py b/release/scripts/startup/bl_ui/properties_freestyle.py
-index fd12747e2fa..9357e74ff2b 100644
 --- a/release/scripts/startup/bl_ui/properties_freestyle.py
 +++ b/release/scripts/startup/bl_ui/properties_freestyle.py
-@@ -19,14 +19,20 @@
- # <pep8 compliant>
- import bpy
- from bpy.types import Menu, Panel, UIList
-+from bl_ui.utils import PresetPanel
+@@ -22,7 +22,6 @@
  
  
-+class VIEWLAYER_PT_linestyle_presets(PresetPanel, Panel):
-+    bl_label = "LineStyle Presets"
-+    preset_subdir = "linestyle"
-+    preset_operator = "script.python_file_run"
-+
  # Render properties
- 
+-
  class RenderFreestyleButtonsPanel:
      bl_space_type = 'PROPERTIES'
      bl_region_type = 'WINDOW'
--    bl_context = "render"
-+    bl_context = "view_layer"
-     # COMPAT_ENGINES must be defined in each subclass, external engines can add themselves here
- 
-     @classmethod
-@@ -37,7 +43,8 @@ class RenderFreestyleButtonsPanel:
- 
- 
- class RENDER_PT_freestyle(RenderFreestyleButtonsPanel, Panel):
--    bl_label = "Freestyle"
-+    bl_label = "Render Freestyle"
-+    bl_parent_id = "VIEWLAYER_PT_layer"
-     bl_options = {'DEFAULT_CLOSED'}
-     bl_order = 10
-     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
-@@ -51,11 +58,15 @@ class RENDER_PT_freestyle(RenderFreestyleButtonsPanel, Panel):
+@@ -49,20 +48,17 @@
+     def draw(self, context):
+         layout = self.layout
          layout.use_property_split = True
-         layout.use_property_decorate = False  # No animation.
- 
-+        ui_factor = context.region.width / bpy.context.preferences.system.dpi
-+        is_narrow = ui_factor < 3
-+
+-        layout.use_property_decorate = False  # No animation.
+-
++        layout.use_property_decorate = False
          rd = context.scene.render
- 
+-
          layout.active = rd.use_freestyle
- 
+-
 -        layout.prop(rd, "line_thickness_mode", expand=True)
-+        flow = layout.column() if is_narrow else layout.row()
-+        flow.prop(rd, "line_thickness_mode", expand=True)
- 
+-
++        layout.row().prop(rd, "line_thickness_mode", expand=True, text="Line Thickness Mode")
          if rd.line_thickness_mode == 'ABSOLUTE':
              layout.prop(rd, "line_thickness")
-@@ -88,14 +99,55 @@ class ViewLayerFreestyleEditorButtonsPanel(ViewLayerFreestyleButtonsPanel):
+ 
+ 
+ # Render layer properties
+ 
++
+ class ViewLayerFreestyleButtonsPanel:
+     bl_space_type = 'PROPERTIES'
+     bl_region_type = 'WINDOW'
+@@ -76,8 +72,12 @@
+         rd = scene.render
+         with_freestyle = bpy.app.build_options.freestyle
+ 
+-        return (scene and with_freestyle and rd.use_freestyle and
+-                (context.engine in cls.COMPAT_ENGINES))
++        return (
++            scene
++            and with_freestyle
++            and rd.use_freestyle
++            and (context.engine in cls.COMPAT_ENGINES)
++        )
+ 
+ 
+ class ViewLayerFreestyleEditorButtonsPanel(ViewLayerFreestyleButtonsPanel):
+@@ -88,7 +88,35 @@
          if not super().poll(context):
              return False
          view_layer = context.view_layer
 -        return view_layer and view_layer.freestyle_settings.mode == 'EDITOR'
-+        return view_layer and view_layer.use_freestyle and view_layer.freestyle_settings.mode == 'EDITOR'
-+
-+
-+class ViewLayerFreestyleLinesetSubPanel(ViewLayerFreestyleEditorButtonsPanel):
-+    # Freestyle Lineset sub panles
-+    bl_parent_id = "VIEWLAYER_PT_freestyle_lineset"
-+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
-+
-+    @classmethod
-+    def poll(cls, context):
-+        if not super().poll(context):
-+            return False
-+        view_layer = context.view_layer
-+        lineset = view_layer.freestyle_settings.linesets.active
-+        if lineset is None:
-+            return False
-+        return True
++        return (
++            view_layer
++            and view_layer.use_freestyle
++            and view_layer.freestyle_settings.mode == 'EDITOR'
++        )
 +
 +
 +class ViewLayerFreestyleLineStyle(ViewLayerFreestyleEditorButtonsPanel):
@@ -314,16 +85,7 @@ index fd12747e2fa..9357e74ff2b 100644
  
  
  class VIEWLAYER_UL_linesets(UIList):
-     def draw_item(self, _context, layout, _data, item, icon, _active_data, _active_propname, index):
-         lineset = item
-         if self.layout_type in {'DEFAULT', 'COMPACT'}:
--            layout.prop(lineset, "name", text="", emboss=False, icon_value=icon)
-+            layout.prop(lineset, "name", text="",
-+                        emboss=False, icon_value=icon)
-             layout.prop(lineset, "show_render", text="", index=index)
-         elif self.layout_type == 'GRID':
-             layout.alignment = 'CENTER'
-@@ -126,54 +178,61 @@ class VIEWLAYER_PT_freestyle(ViewLayerFreestyleButtonsPanel, Panel):
+@@ -126,54 +154,85 @@
  
      def draw(self, context):
          layout = self.layout
@@ -344,11 +106,23 @@ index fd12747e2fa..9357e74ff2b 100644
 +        col.prop(freestyle, "mode", text="Control Mode")
 +        col.prop(freestyle, "use_view_map_cache", text="View Map Cache")
 +        col.prop(freestyle, "as_render_pass", text="As Render Pass")
++
++
++class VIEWLAYER_PT_freestyle_edge_detection_options(ViewLayerFreestyleButtonsPanel, Panel):
++    bl_label = "Edge Detection Options"
++    bl_parent_id = "VIEWLAYER_PT_freestyle"
++    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
++
++    def draw(self, context):
++        layout = self.layout
++        layout.use_property_split = True
++        layout.use_property_decorate = False
  
 -        split = layout.split()
-+        split = layout.split(factor=.4)
-+        split.alignment = 'RIGHT'
-+        split.label(text="Edge Detection Options")
++        view_layer = context.view_layer
++        freestyle = view_layer.freestyle_settings
++
++        layout.active = view_layer.use_freestyle
  
 -        col = split.column()
 +        col = layout.column()
@@ -362,79 +136,121 @@ index fd12747e2fa..9357e74ff2b 100644
          if freestyle.mode == 'SCRIPT':
              col.prop(freestyle, "use_material_boundaries")
  
-+        col.prop(freestyle, "use_advanced_options")
-+
-         # Advanced options are hidden by default to warn new users
-         if freestyle.use_advanced_options:
-             if freestyle.mode == 'SCRIPT':
+-        # Advanced options are hidden by default to warn new users
+-        if freestyle.use_advanced_options:
+-            if freestyle.mode == 'SCRIPT':
 -                row = layout.row()
 -                row.prop(freestyle, "use_ridges_and_valleys")
 -                row.prop(freestyle, "use_suggestive_contours")
 -            row = layout.row()
 -            row.prop(freestyle, "sphere_radius")
 -            row.prop(freestyle, "kr_derivative_epsilon")
-+                col.prop(freestyle, "use_ridges_and_valleys")
-+                col.prop(freestyle, "use_suggestive_contours")
-+            col.prop(freestyle, "sphere_radius")
-+            col.prop(freestyle, "kr_derivative_epsilon")
- 
+-
          if freestyle.mode == 'SCRIPT':
 -            row = layout.row()
-+            col = layout.column()
-+            col.use_property_split = False
-+            row = col.row()
-             row.label(text="Style Modules:")
-             row.operator("scene.freestyle_module_add", text="Add")
-             for module in freestyle.modules:
+-            row.label(text="Style Modules:")
+-            row.operator("scene.freestyle_module_add", text="Add")
+-            for module in freestyle.modules:
 -                box = layout.box()
-+                box = col.box()
-                 box.context_pointer_set("freestyle_module", module)
-                 row = box.row(align=True)
-                 row.prop(module, "use", text="")
-                 row.prop(module, "script", text="")
+-                box.context_pointer_set("freestyle_module", module)
+-                row = box.row(align=True)
+-                row.prop(module, "use", text="")
+-                row.prop(module, "script", text="")
 -                row.operator("scene.freestyle_module_open", icon='FILEBROWSER', text="")
 -                row.operator("scene.freestyle_module_remove", icon='X', text="")
 -                row.operator("scene.freestyle_module_move", icon='TRIA_UP', text="").direction = 'UP'
 -                row.operator("scene.freestyle_module_move", icon='TRIA_DOWN', text="").direction = 'DOWN'
-+                row.operator("scene.freestyle_module_open",
-+                             icon='FILEBROWSER', text="")
-+                row.operator("scene.freestyle_module_remove",
-+                             icon='X', text="")
-+                row.operator("scene.freestyle_module_move",
-+                             icon='TRIA_UP', text="").direction = 'UP'
-+                row.operator("scene.freestyle_module_move",
-+                             icon='TRIA_DOWN', text="").direction = 'DOWN'
++            col.prop(freestyle, "use_ridges_and_valleys")
++            col.prop(freestyle, "use_suggestive_contours")
++        col.prop(freestyle, "sphere_radius")
++        col.prop(freestyle, "kr_derivative_epsilon")
++
++
++class VIEWLAYER_PT_freestyle_style_modules(ViewLayerFreestyleButtonsPanel, Panel):
++    bl_label = "Style Modules"
++    bl_parent_id = "VIEWLAYER_PT_freestyle"
++    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
++
++    @classmethod
++    def poll(cls, context):
++        view_layer = context.view_layer
++        freestyle = view_layer.freestyle_settings
++        return freestyle.mode == 'SCRIPT'
++
++    def draw(self, context):
++        layout = self.layout
++        layout.use_property_split = True
++        layout.use_property_decorate = False
++
++        view_layer = context.view_layer
++        freestyle = view_layer.freestyle_settings
++
++        layout.active = view_layer.use_freestyle
++
++        col = layout.column()
++        col.use_property_split = False
++        row = col.row()
++        row.operator("scene.freestyle_module_add", text="Add")
++        for module in freestyle.modules:
++            box = col.box()
++            box.context_pointer_set("freestyle_module", module)
++            row = box.row(align=True)
++            row.prop(module, "use", text="")
++            row.prop(module, "script", text="")
++            row.operator("scene.freestyle_module_open", icon='FILEBROWSER', text="")
++            row.operator("scene.freestyle_module_remove", icon='X', text="")
++            row.operator("scene.freestyle_module_move", icon='TRIA_UP', text="").direction = 'UP'
++            row.operator("scene.freestyle_module_move", icon='TRIA_DOWN', text="").direction = 'DOWN'
  
  
  class VIEWLAYER_PT_freestyle_lineset(ViewLayerFreestyleEditorButtonsPanel, Panel):
-@@ -199,7 +258,6 @@ class VIEWLAYER_PT_freestyle_lineset(ViewLayerFreestyleEditorButtonsPanel, Panel
+@@ -198,10 +257,13 @@
+         freestyle = view_layer.freestyle_settings
          lineset = freestyle.linesets.active
  
-         layout.active = view_layer.use_freestyle
+-        layout.active = view_layer.use_freestyle
 -
          row = layout.row()
-         rows = 4 if lineset else 2
+-        rows = 4 if lineset else 2
++
++        is_sortable = len(freestyle.linesets) > 1
++        rows = 3
++        if is_sortable:
++            rows = 5
++
          row.template_list(
-@@ -215,146 +273,562 @@ class VIEWLAYER_PT_freestyle_lineset(ViewLayerFreestyleEditorButtonsPanel, Panel
-         sub = row.column(align=True)
-         sub.operator("scene.freestyle_lineset_add", icon='ADD', text="")
-         sub.operator("scene.freestyle_lineset_remove", icon='REMOVE', text="")
+             "VIEWLAYER_UL_linesets",
+             "",
+@@ -212,157 +274,504 @@
+             rows=rows,
+         )
+ 
+-        sub = row.column(align=True)
+-        sub.operator("scene.freestyle_lineset_add", icon='ADD', text="")
+-        sub.operator("scene.freestyle_lineset_remove", icon='REMOVE', text="")
 -        sub.menu("RENDER_MT_lineset_context_menu", icon='DOWNARROW_HLT', text="")
-+        sub.menu("RENDER_MT_lineset_context_menu",
-+                 icon='DOWNARROW_HLT', text="")
++        col = row.column(align=True)
++        col.operator("scene.freestyle_lineset_add", icon='ADD', text="")
++        col.operator("scene.freestyle_lineset_remove", icon='REMOVE', text="")
++
++        col.separator()
++
++        col.menu("RENDER_MT_lineset_context_menu", icon="DOWNARROW_HLT", text="")
++
++        if is_sortable:
++            col.separator()
++            col.operator("scene.freestyle_lineset_move", icon='TRIA_UP', text="").direction = 'UP'
++            col.operator("scene.freestyle_lineset_move", icon='TRIA_DOWN', text="").direction = 'DOWN'
++
          if lineset:
-             sub.separator()
-             sub.separator()
+-            sub.separator()
+-            sub.separator()
 -            sub.operator("scene.freestyle_lineset_move", icon='TRIA_UP', text="").direction = 'UP'
 -            sub.operator("scene.freestyle_lineset_move", icon='TRIA_DOWN', text="").direction = 'DOWN'
-+            sub.operator("scene.freestyle_lineset_move",
-+                         icon='TRIA_UP', text="").direction = 'UP'
-+            sub.operator("scene.freestyle_lineset_move",
-+                         icon='TRIA_DOWN', text="").direction = 'DOWN'
- 
-             col = layout.column()
-             col.label(text="Selection By:")
-             row = col.row(align=True)
+-
+-            col = layout.column()
+-            col.label(text="Selection By:")
+-            row = col.row(align=True)
 -            row.prop(lineset, "select_by_visibility", text="Visibility", toggle=True)
 -            row.prop(lineset, "select_by_edge_types", text="Edge Types", toggle=True)
 -            row.prop(lineset, "select_by_face_marks", text="Face Marks", toggle=True)
@@ -485,13 +301,20 @@ index fd12747e2fa..9357e74ff2b 100644
 -
 -
 -class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Panel):
-+            row.separator(factor=2.0)
-+            row.prop(lineset, "select_by_image_border", text="Image Border")
+-    bl_label = "Freestyle Line Style"
++            layout.template_ID(lineset, "linestyle", new="scene.freestyle_linestyle_new")
++            layout.separator()
++            col = layout.column(heading="Select by")
++            col.use_property_split = True
++            col.use_property_decorate = False
++            col.prop(lineset, "select_by_image_border", text="Image Border")
 +
 +
 +# Freestyle Lineset Sub Panels
-+class VIEWLAYER_PT_freestyle_lineset_visibilty(ViewLayerFreestyleLinesetSubPanel, Panel):
++class VIEWLAYER_PT_freestyle_lineset_visibilty(ViewLayerFreestyleLineStyle, Panel):
 +    bl_label = "Visibility"
++    bl_parent_id = "VIEWLAYER_PT_freestyle_lineset"
++    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 +
 +    def draw_header(self, context):
 +        layout = self.layout
@@ -507,39 +330,25 @@ index fd12747e2fa..9357e74ff2b 100644
 +        layout.use_property_split = True
 +        layout.use_property_decorate = False
 +
-+        # a solution for dynamic UI (e.g column if space is narrow, else row)
-+        # because grid flow doesn't adapt well with property split
-+        ui_factor = context.region.width / bpy.context.preferences.system.dpi
-+        is_narrow = ui_factor < 3
-+
 +        view_layer = context.view_layer
 +        freestyle = view_layer.freestyle_settings
 +        lineset = freestyle.linesets.active
 +
 +        layout.active = lineset.select_by_visibility
-+
-+        split = layout.split(factor=.4)
-+        split.alignment = "RIGHT"
-+        split.label(text="Type")
-+
-+        col = split.column(align=True)
-+        col.use_property_split = False
-+        col.prop(lineset, "visibility", text="Type", expand=True)
++        col = layout.column(align=True, heading="Type")
++        col.prop(lineset, "visibility", text="Type", expand=False)
 +
 +        if lineset.visibility == 'RANGE':
-+            split = layout.split(factor=.4)
-+            split.alignment = "RIGHT"
-+            split.label(text="QI Range")
-+
-+            flow = split.column(
-+                align=True) if is_narrow else split.row(align=True)
-+            flow.use_property_split = False
-+            flow.prop(lineset, "qi_start")
-+            flow.prop(lineset, "qi_end")
++            col = layout.column(align=True)
++            col.use_property_split = True
++            col.prop(lineset, "qi_start")
++            col.prop(lineset, "qi_end")
 +
 +
-+class VIEWLAYER_PT_freestyle_lineset_edgetypes(ViewLayerFreestyleLinesetSubPanel, Panel):
-+    bl_label = "Edge Types"
++class VIEWLAYER_PT_freestyle_lineset_edgetype(ViewLayerFreestyleLineStyle, Panel):
++    bl_label = "Edge Type"
++    bl_parent_id = "VIEWLAYER_PT_freestyle_lineset"
++    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 +
 +    def draw_header(self, context):
 +        layout = self.layout
@@ -566,26 +375,15 @@ index fd12747e2fa..9357e74ff2b 100644
 +        layout.use_property_split = True
 +        layout.use_property_decorate = False
 +
-+        ui_factor = context.region.width / bpy.context.preferences.system.dpi
-+        is_narrow = ui_factor < 3
-+
 +        view_layer = context.view_layer
 +        freestyle = view_layer.freestyle_settings
 +        lineset = freestyle.linesets.active
 +
-+        if lineset is None:
-+            return False
-+
 +        layout.active = lineset.select_by_edge_types
++        layout.row().prop(lineset, "edge_type_negation", expand=True, text="Negation")
++        layout.row().prop(lineset, "edge_type_combination", expand=True, text="Combination")
 +
-+        flow = layout.column() if is_narrow else layout.row()
-+        flow.prop(lineset, "edge_type_negation", expand=True, text="Negation")
-+
-+        flow = layout.column() if is_narrow else layout.row()
-+        flow.prop(lineset, "edge_type_combination",
-+                  expand=True, text="Combination")
-+
-+        col = layout.column(heading="Types")
++        col = layout.column(heading="Type")
 +        self.draw_edge_type_buttons(col, lineset, "silhouette")
 +        self.draw_edge_type_buttons(col, lineset, "crease")
 +        self.draw_edge_type_buttons(col, lineset, "border")
@@ -597,9 +395,11 @@ index fd12747e2fa..9357e74ff2b 100644
 +        self.draw_edge_type_buttons(col, lineset, "ridge_valley")
 +
 +
-+class VIEWLAYER_PT_freestyle_lineset_facemarks(ViewLayerFreestyleLinesetSubPanel, Panel):
++class VIEWLAYER_PT_freestyle_lineset_facemarks(ViewLayerFreestyleLineStyle, Panel):
 +    bl_label = "Face Marks"
-+    bl_options = {'DEFAULT_CLOSED'}
++    bl_parent_id = "VIEWLAYER_PT_freestyle_lineset"
++    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+     bl_options = {'DEFAULT_CLOSED'}
 +
 +    def draw_header(self, context):
 +        layout = self.layout
@@ -615,157 +415,20 @@ index fd12747e2fa..9357e74ff2b 100644
 +        layout.use_property_split = True
 +        layout.use_property_decorate = False
 +
-+        ui_factor = context.region.width / bpy.context.preferences.system.dpi
-+        is_narrow = ui_factor < 3
-+
 +        view_layer = context.view_layer
 +        freestyle = view_layer.freestyle_settings
 +        lineset = freestyle.linesets.active
-+
-+        if lineset is None:
-+            return False
 +
 +        layout.active = lineset.select_by_face_marks
-+
-+        flow = layout.column() if is_narrow else layout.row()
-+        flow.prop(lineset, "face_mark_negation", expand=True, text="Negation")
-+
-+        flow = layout.column() if is_narrow else layout.row()
-+        flow.prop(lineset, "face_mark_condition",
-+                  expand=True, text="Condition")
++        layout.row().prop(lineset, "face_mark_negation", expand=True, text="Negation")
++        layout.row().prop(lineset, "face_mark_condition", expand=True, text="Condition")
 +
 +
-+class VIEWLAYER_PT_freestyle_lineset_collection(ViewLayerFreestyleLinesetSubPanel, Panel):
++class VIEWLAYER_PT_freestyle_lineset_collection(ViewLayerFreestyleLineStyle, Panel):
 +    bl_label = "Collection"
++    bl_parent_id = "VIEWLAYER_PT_freestyle_lineset"
+     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 +    bl_options = {'DEFAULT_CLOSED'}
-+
-+    def draw_header(self, context):
-+        layout = self.layout
-+
-+        view_layer = context.view_layer
-+        freestyle = view_layer.freestyle_settings
-+        lineset = freestyle.linesets.active
-+
-+        layout.prop(lineset, "select_by_collection", text="")
-+
-+    def draw(self, context):
-+        layout = self.layout
-+        layout.use_property_split = True
-+        layout.use_property_decorate = False
-+
-+        ui_factor = context.region.width / bpy.context.preferences.system.dpi
-+        is_narrow = ui_factor < 3
-+
-+        view_layer = context.view_layer
-+        freestyle = view_layer.freestyle_settings
-+        lineset = freestyle.linesets.active
-+
-+        if lineset is None:
-+            return False
-+
-+        layout.active = lineset.select_by_collection
-+
-+        layout.row().prop(lineset, "collection", text="Freestyle Lineset Collection")
-+        flow = layout.column() if is_narrow else layout.row()
-+        flow.prop(lineset, "collection_negation", expand=True, text="Negation")
-+
-+
-+# Linestyle Modifier Drawing code
-+def draw_modifier_box_header(box, modifier):
-+    row = box.row()
-+    row.use_property_split = False
-+    row.context_pointer_set("modifier", modifier)
-+    if modifier.expanded:
-+        icon = 'TRIA_DOWN'
-+    else:
-+        icon = 'TRIA_RIGHT'
-+    row.prop(modifier, "expanded", text="", icon=icon, emboss=False)
-+    # TODO: Use icons rather than text label, would save some room!
-+    row.label(text=modifier.rna_type.name)
-+    row.prop(modifier, "name", text="")
-+    if modifier.use:
-+        icon = 'RESTRICT_RENDER_OFF'
-+    else:
-+        icon = 'RESTRICT_RENDER_ON'
-+    row.prop(modifier, "use", text="", icon=icon)
-+    sub = row.row(align=True)
-+    sub.operator("scene.freestyle_modifier_copy", icon='NONE', text="Copy")
-+    sub.operator("scene.freestyle_modifier_move",
-+                 icon='TRIA_UP', text="").direction = 'UP'
-+    sub.operator("scene.freestyle_modifier_move",
-+                 icon='TRIA_DOWN', text="").direction = 'DOWN'
-+    sub.operator("scene.freestyle_modifier_remove", icon='X', text="")
-+
-+
-+def draw_modifier_box_error(box, _modifier, message):
-+    row = box.row()
-+    row.label(text=message, icon='ERROR')
-+
-+
-+def draw_modifier_common(box, modifier):
-+    row = box.row()
-+    row.prop(modifier, "blend", text="")
-+    row.prop(modifier, "influence")
-+
-+
-+def draw_modifier_color_ramp_common(box, modifier, has_range):
-+    box.template_color_ramp(modifier, "color_ramp", expand=True)
-+    if has_range:
-+        row = box.row(align=True)
-+        row.prop(modifier, "range_min")
-+        row.prop(modifier, "range_max")
-+
-+
-+def draw_modifier_curve_common(box, modifier, has_range, has_value):
-+    row = box.row()
-+    row.prop(modifier, "mapping", text="")
-+    sub = row.column()
-+    sub.prop(modifier, "invert")
-+    if modifier.mapping == 'CURVE':
-+        sub.active = False
-+        box.template_curve_mapping(modifier, "curve")
-+    if has_range:
-+        row = box.row(align=True)
-+        row.prop(modifier, "range_min")
-+        row.prop(modifier, "range_max")
-+    if has_value:
-+        row = box.row(align=True)
-+        row.prop(modifier, "value_min")
-+        row.prop(modifier, "value_max")
-+
-+
-+class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleLineStyle, Panel):
-     bl_label = "Freestyle Line Style"
-+
-+    def draw_header_preset(self, _context):
-+        VIEWLAYER_PT_linestyle_presets.draw_panel_header(self.layout)
-+
-+    def draw(self, context):
-+        layout = self.layout
-+        layout.use_property_split = True
-+        layout.use_property_decorate = False
-+
-+        view_layer = context.view_layer
-+        lineset = view_layer.freestyle_settings.linesets.active
-+
-+        layout.active = view_layer.use_freestyle
-+
-+        if lineset is None:
-+            return
-+        linestyle = lineset.linestyle
-+
-+        layout.template_ID(lineset, "linestyle",
-+                           new="scene.freestyle_linestyle_new")
-+        if linestyle is None:
-+            return
-+        row = layout.row(align=True)
-+        row.use_property_split = False
-+
-+
-+class VIEWLAYER_PT_freestyle_linestyle_strokes(ViewLayerFreestyleLineStyle, Panel):
-+    bl_label = "Freestyle Line Style: Strokes"
-     bl_options = {'DEFAULT_CLOSED'}
--    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
  
 -    def draw_modifier_box_header(self, box, modifier):
 -        row = box.row()
@@ -821,6 +484,96 @@ index fd12747e2fa..9357e74ff2b 100644
 -            row = box.row(align=True)
 -            row.prop(modifier, "value_min")
 -            row.prop(modifier, "value_max")
++    def draw_header(self, context):
++        layout = self.layout
++
++        view_layer = context.view_layer
++        freestyle = view_layer.freestyle_settings
++        lineset = freestyle.linesets.active
++
++        layout.prop(lineset, "select_by_collection", text="")
++
++    def draw(self, context):
++        layout = self.layout
++        layout.use_property_split = True
++        layout.use_property_decorate = False
++
++        view_layer = context.view_layer
++        freestyle = view_layer.freestyle_settings
++        lineset = freestyle.linesets.active
++
++        layout.active = lineset.select_by_collection
++        layout.row().prop(lineset, "collection", text="Freestyle Lineset Collection")
++        layout.row().prop(lineset, "collection_negation", expand=True, text="Negation")
++
++
++# Linestyle Modifier Drawing code
++def draw_modifier_box_header(box, modifier):
++    row = box.row()
++    row.use_property_split = False
++    row.context_pointer_set("modifier", modifier)
++    if modifier.expanded:
++        icon = 'TRIA_DOWN'
++    else:
++        icon = 'TRIA_RIGHT'
++    row.prop(modifier, "expanded", text="", icon=icon, emboss=False)
++
++    sub = row.row(align=True)
++    sub.prop(modifier, "name", text="")
++    if modifier.use:
++        icon = 'RESTRICT_RENDER_OFF'
++    else:
++        icon = 'RESTRICT_RENDER_ON'
++    sub.prop(modifier, "use", text="", icon=icon)
++    sub.operator("scene.freestyle_modifier_copy", icon='DUPLICATE', text="")
++
++    sub = row.row(align=True)
++    sub.operator("scene.freestyle_modifier_move", icon='TRIA_UP', text="").direction = 'UP'
++    sub.operator("scene.freestyle_modifier_move", icon='TRIA_DOWN', text="").direction = 'DOWN'
++
++    row.operator("scene.freestyle_modifier_remove", icon='X', text="", emboss=False)
++
++
++def draw_modifier_box_error(box, _modifier, message):
++    row = box.row()
++    row.label(text=message, icon='ERROR')
++
++
++def draw_modifier_common(box, modifier):
++    col = box.column()
++    col.prop(modifier, "blend", text="Blend Mode")
++    col.prop(modifier, "influence")
++
++
++def draw_modifier_color_ramp_common(box, modifier, has_range):
++    box.template_color_ramp(modifier, "color_ramp", expand=True)
++    if has_range:
++        col = box.column(align=True)
++        col.prop(modifier, "range_min", text="Range Min")
++        col.prop(modifier, "range_max", text="Max")
++
++
++def draw_modifier_curve_common(box, modifier, has_range, has_value):
++    row = box.row()
++    row.prop(modifier, "mapping", text="Mapping")
++    if modifier.mapping == 'LINEAR':
++        box.prop(modifier, "invert")
++    if has_range:
++        col = box.column(align=True)
++        col.prop(modifier, "range_min", text="Range Min")
++        col.prop(modifier, "range_max", text="Max")
++    if has_value:
++        col = box.column(align=True)
++        col.prop(modifier, "value_min", text="Value Min")
++        col.prop(modifier, "value_max", text="Max")
++    if modifier.mapping == 'CURVE':
++        box.template_curve_mapping(modifier, "curve")
++
++
++class VIEWLAYER_PT_freestyle_linestyle_strokes(ViewLayerFreestyleLineStyle, Panel):
++    bl_label = "Freestyle Strokes"
++    bl_options = {'DEFAULT_CLOSED'}
++
 +    def draw(self, context):
 +        layout = self.layout
 +        layout.use_property_split = True
@@ -839,13 +592,13 @@ index fd12747e2fa..9357e74ff2b 100644
 +            return
 +
 +        row = layout.row(align=True)
-+        row.alignment = "LEFT"
-+        row.label(text=lineset.name, icon="LINE_DATA")
-+        row.label(text="", icon="SMALL_TRI_RIGHT_VEC")
++        row.alignment = 'LEFT'
++        row.label(text=lineset.name, icon='LINE_DATA')
++        row.label(text="", icon='SMALL_TRI_RIGHT_VEC')
 +        row.label(text=linestyle.name)
 +
 +        col = layout.column(align=True)
-+        col.prop(linestyle, "caps", expand=True)
++        col.prop(linestyle, "caps", expand=False)
 +
 +
 +class VIEWLAYER_PT_freestyle_linestyle_strokes_chaining(ViewLayerFreestyleLinestyleStrokesSubPanel, Panel):
@@ -866,18 +619,12 @@ index fd12747e2fa..9357e74ff2b 100644
 +        layout.use_property_split = True
 +        layout.use_property_decorate = False
 +
-+        ui_factor = context.region.width / bpy.context.preferences.system.dpi
-+        is_narrow = ui_factor < 3
-+
 +        view_layer = context.view_layer
 +        lineset = view_layer.freestyle_settings.linesets.active
 +        linestyle = lineset.linestyle
 +
 +        layout.active = linestyle.use_chaining
-+
-+        flow = layout.column() if is_narrow else layout.row()
-+        flow.prop(linestyle, "chaining", expand=True, text="Method")
-+
++        layout.row().prop(linestyle, "chaining", expand=True, text="Method")
 +        if linestyle.chaining == 'SKETCHY':
 +            layout.prop(linestyle, "rounds")
 +        layout.prop(linestyle, "use_same_object")
@@ -934,6 +681,7 @@ index fd12747e2fa..9357e74ff2b 100644
 +
 +    def draw(self, context):
 +        layout = self.layout
++        layout.use_property_split = True
 +        layout.use_property_decorate = False
 +
 +        view_layer = context.view_layer
@@ -943,12 +691,13 @@ index fd12747e2fa..9357e74ff2b 100644
 +        layout.active = linestyle.use_split_pattern
 +
 +        col = layout.column(align=True)
-+        col.prop(linestyle, "split_dash1", text="D1")
-+        col.prop(linestyle, "split_gap1", text="G1")
-+        col.prop(linestyle, "split_dash2", text="D2")
-+        col.prop(linestyle, "split_gap2", text="G2")
-+        col.prop(linestyle, "split_dash3", text="D3")
-+        col.prop(linestyle, "split_gap3", text="G3")
++        col.prop(linestyle, "split_dash1", text="Dash 1")
++        col.prop(linestyle, "split_dash2", text="2")
++        col.prop(linestyle, "split_dash3", text="3")
++        col = layout.column(align=True)
++        col.prop(linestyle, "split_gap1", text="Gap 1")
++        col.prop(linestyle, "split_gap2", text="2")
++        col.prop(linestyle, "split_gap3", text="3")
 +
 +
 +class VIEWLAYER_PT_freestyle_linestyle_strokes_sorting(ViewLayerFreestyleLinestyleStrokesSubPanel, Panel):
@@ -970,9 +719,6 @@ index fd12747e2fa..9357e74ff2b 100644
 +        layout.use_property_split = True
 +        layout.use_property_decorate = False
 +
-+        ui_factor = context.region.width / bpy.context.preferences.system.dpi
-+        is_narrow = ui_factor < 3
-+
 +        view_layer = context.view_layer
 +        freestyle = view_layer.freestyle_settings
 +        lineset = freestyle.linesets.active
@@ -984,13 +730,13 @@ index fd12747e2fa..9357e74ff2b 100644
 +        layout.prop(linestyle, "sort_key")
 +
 +        row = layout.row()
-+        row.active = linestyle.sort_key in {'DISTANCE_FROM_CAMERA',
-+                                            'PROJECTED_X',
-+                                            'PROJECTED_Y'}
++        row.active = linestyle.sort_key in {
++            'DISTANCE_FROM_CAMERA',
++            'PROJECTED_X',
++            'PROJECTED_Y',
++        }
 +        row.prop(linestyle, "integration_type")
-+
-+        flow = layout.column() if is_narrow else layout.row()
-+        flow.prop(linestyle, "sort_order", expand=True)
++        layout.row().prop(linestyle, "sort_order", expand=True, text="Sort Order")
 +
 +
 +class VIEWLAYER_PT_freestyle_linestyle_strokes_selection(ViewLayerFreestyleLinestyleStrokesSubPanel, Panel):
@@ -1041,6 +787,7 @@ index fd12747e2fa..9357e74ff2b 100644
 +
 +    def draw(self, context):
 +        layout = self.layout
++        layout.use_property_split = True
 +        layout.use_property_decorate = False
 +
 +        view_layer = context.view_layer
@@ -1050,16 +797,17 @@ index fd12747e2fa..9357e74ff2b 100644
 +        layout.active = linestyle.use_dashed_line
 +
 +        col = layout.column(align=True)
-+        col.prop(linestyle, "dash1", text="D1")
-+        col.prop(linestyle, "gap1", text="G1")
-+        col.prop(linestyle, "dash2", text="D2")
-+        col.prop(linestyle, "gap2", text="G2")
-+        col.prop(linestyle, "dash3", text="D3")
-+        col.prop(linestyle, "gap3", text="G3")
++        col.prop(linestyle, "dash1", text="Dash 1")
++        col.prop(linestyle, "dash2", text="2")
++        col.prop(linestyle, "dash3", text="3")
++        col = layout.column(align=True)
++        col.prop(linestyle, "gap1", text="Gap 1")
++        col.prop(linestyle, "gap2", text="2")
++        col.prop(linestyle, "gap3", text="3")
 +
 +
 +class VIEWLAYER_PT_freestyle_linestyle_color(ViewLayerFreestyleLineStyle, Panel):
-+    bl_label = "Freestyle Line Style: Color"
++    bl_label = "Freestyle Color"
 +    bl_options = {'DEFAULT_CLOSED'}
  
      def draw_color_modifier(self, context, modifier):
@@ -1091,7 +839,18 @@ index fd12747e2fa..9357e74ff2b 100644
                  prop = box.operator("scene.freestyle_fill_range_by_selection")
                  prop.type = 'COLOR'
                  prop.name = modifier.name
-@@ -371,117 +845,191 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
+ 
+             elif modifier.type == 'MATERIAL':
+                 row = box.row()
+-                row.prop(modifier, "material_attribute", text="")
+-                sub = row.column()
++                row.prop(modifier, "material_attribute",
++                         text="Material Attribute")
++                sub = box.column()
+                 sub.prop(modifier, "use_ramp")
+                 if modifier.material_attribute in {'LINE', 'DIFF', 'SPEC'}:
+                     sub.active = True
+@@ -371,166 +780,292 @@
                      sub.active = False
                      show_ramp = True
                  if show_ramp:
@@ -1104,25 +863,37 @@ index fd12747e2fa..9357e74ff2b 100644
  
              elif modifier.type == 'NOISE':
 -                self.draw_modifier_color_ramp_common(box, modifier, False)
+-                row = box.row(align=False)
+-                row.prop(modifier, "amplitude")
+-                row.prop(modifier, "period")
+-                row.prop(modifier, "seed")
++                subcol = box.column(align=True)
++                subcol.prop(modifier, "amplitude")
++                subcol.prop(modifier, "period")
++                subcol.prop(modifier, "seed")
 +                draw_modifier_color_ramp_common(box, modifier, False)
-                 row = box.row(align=False)
-                 row.prop(modifier, "amplitude")
-                 row.prop(modifier, "period")
-                 row.prop(modifier, "seed")
  
              elif modifier.type == 'CREASE_ANGLE':
 -                self.draw_modifier_color_ramp_common(box, modifier, False)
+-                row = box.row(align=True)
+-                row.prop(modifier, "angle_min")
+-                row.prop(modifier, "angle_max")
++                subcol = box.column(align=True)
++                subcol.prop(modifier, "angle_min", text="Angle Min")
++                subcol.prop(modifier, "angle_max", text="Max")
 +                draw_modifier_color_ramp_common(box, modifier, False)
-                 row = box.row(align=True)
-                 row.prop(modifier, "angle_min")
-                 row.prop(modifier, "angle_max")
  
              elif modifier.type == 'CURVATURE_3D':
 -                self.draw_modifier_color_ramp_common(box, modifier, False)
+-                row = box.row(align=True)
+-                row.prop(modifier, "curvature_min")
+-                row.prop(modifier, "curvature_max")
++                subcol = box.column(align=True)
++                subcol.prop(modifier, "curvature_min", text="Curvature Min")
++                subcol.prop(modifier, "curvature_max", text="Max")
++
 +                draw_modifier_color_ramp_common(box, modifier, False)
-                 row = box.row(align=True)
-                 row.prop(modifier, "curvature_min")
-                 row.prop(modifier, "curvature_max")
++
                  freestyle = context.view_layer.freestyle_settings
                  if not freestyle.use_smoothness:
                      message = "Enable Face Smoothness to use this modifier"
@@ -1147,23 +918,21 @@ index fd12747e2fa..9357e74ff2b 100644
 +            return
 +
 +        row = layout.row(align=True)
-+        row.alignment = "LEFT"
-+        row.label(text=lineset.name, icon="LINE_DATA")
-+        row.label(text="", icon="SMALL_TRI_RIGHT_VEC")
++        row.alignment = 'LEFT'
++        row.label(text=lineset.name, icon='LINE_DATA')
++        row.label(text="", icon='SMALL_TRI_RIGHT_VEC')
 +        row.label(text=linestyle.name)
 +
 +        col = layout.column()
 +        row = col.row()
 +        row.prop(linestyle, "color", text="Base Color")
-+        col.label(text="Modifiers:")
-+        col.operator_menu_enum(
-+            "scene.freestyle_color_modifier_add", "type", text="Add Modifier")
++        col.operator_menu_enum("scene.freestyle_color_modifier_add", "type", text="Add Modifier")
 +        for modifier in linestyle.color_modifiers:
 +            self.draw_color_modifier(context, modifier)
 +
 +
 +class VIEWLAYER_PT_freestyle_linestyle_alpha(ViewLayerFreestyleLineStyle, Panel):
-+    bl_label = "Freestyle Line Style: Alpha"
++    bl_label = "Freestyle Alpha"
 +    bl_options = {'DEFAULT_CLOSED'}
  
      def draw_alpha_modifier(self, context, modifier):
@@ -1197,8 +966,9 @@ index fd12747e2fa..9357e74ff2b 100644
                  prop.name = modifier.name
  
              elif modifier.type == 'MATERIAL':
-                 box.prop(modifier, "material_attribute", text="")
+-                box.prop(modifier, "material_attribute", text="")
 -                self.draw_modifier_curve_common(box, modifier, False, False)
++                box.prop(modifier, "material_attribute", text="Material Attribute")
 +                draw_modifier_curve_common(box, modifier, False, False)
  
              elif modifier.type == 'TANGENT':
@@ -1207,25 +977,37 @@ index fd12747e2fa..9357e74ff2b 100644
  
              elif modifier.type == 'NOISE':
 -                self.draw_modifier_curve_common(box, modifier, False, False)
+-                row = box.row(align=False)
+-                row.prop(modifier, "amplitude")
+-                row.prop(modifier, "period")
+-                row.prop(modifier, "seed")
++                col = box.column(align=True)
++                col.prop(modifier, "amplitude")
++                col.prop(modifier, "period")
++                col.prop(modifier, "seed")
 +                draw_modifier_curve_common(box, modifier, False, False)
-                 row = box.row(align=False)
-                 row.prop(modifier, "amplitude")
-                 row.prop(modifier, "period")
-                 row.prop(modifier, "seed")
  
              elif modifier.type == 'CREASE_ANGLE':
 -                self.draw_modifier_curve_common(box, modifier, False, False)
+-                row = box.row(align=True)
+-                row.prop(modifier, "angle_min")
+-                row.prop(modifier, "angle_max")
++                col = box.column(align=True)
++                col.prop(modifier, "angle_min", text="Angle Min")
++                col.prop(modifier, "angle_max", text="Max")
 +                draw_modifier_curve_common(box, modifier, False, False)
-                 row = box.row(align=True)
-                 row.prop(modifier, "angle_min")
-                 row.prop(modifier, "angle_max")
  
              elif modifier.type == 'CURVATURE_3D':
 -                self.draw_modifier_curve_common(box, modifier, False, False)
+-                row = box.row(align=True)
+-                row.prop(modifier, "curvature_min")
+-                row.prop(modifier, "curvature_max")
 +                draw_modifier_curve_common(box, modifier, False, False)
-                 row = box.row(align=True)
-                 row.prop(modifier, "curvature_min")
-                 row.prop(modifier, "curvature_max")
++
++                subcol = box.column(align=True)
++                subcol.prop(modifier, "curvature_min", text="Curvature Min")
++                subcol.prop(modifier, "curvature_max", text="Max")
++
                  freestyle = context.view_layer.freestyle_settings
                  if not freestyle.use_smoothness:
                      message = "Enable Face Smoothness to use this modifier"
@@ -1250,23 +1032,21 @@ index fd12747e2fa..9357e74ff2b 100644
 +            return
 +
 +        row = layout.row(align=True)
-+        row.alignment = "LEFT"
-+        row.label(text=lineset.name, icon="LINE_DATA")
-+        row.label(text="", icon="SMALL_TRI_RIGHT_VEC")
++        row.alignment = 'LEFT'
++        row.label(text=lineset.name, icon='LINE_DATA')
++        row.label(text="", icon='SMALL_TRI_RIGHT_VEC')
 +        row.label(text=linestyle.name)
 +
 +        col = layout.column()
 +        row = col.row()
 +        row.prop(linestyle, "alpha", text="Base Transparency")
-+        col.label(text="Modifiers:")
-+        col.operator_menu_enum(
-+            "scene.freestyle_alpha_modifier_add", "type", text="Add Modifier")
++        col.operator_menu_enum("scene.freestyle_alpha_modifier_add", "type", text="Add Modifier")
 +        for modifier in linestyle.alpha_modifiers:
 +            self.draw_alpha_modifier(context, modifier)
 +
 +
 +class VIEWLAYER_PT_freestyle_linestyle_thickness(ViewLayerFreestyleLineStyle, Panel):
-+    bl_label = "Freestyle Line Style: Thickness"
++    bl_label = "Freestyle Thickness"
 +    bl_options = {'DEFAULT_CLOSED'}
  
      def draw_thickness_modifier(self, context, modifier):
@@ -1300,40 +1080,83 @@ index fd12747e2fa..9357e74ff2b 100644
                  prop.name = modifier.name
  
              elif modifier.type == 'MATERIAL':
-                 box.prop(modifier, "material_attribute", text="")
+-                box.prop(modifier, "material_attribute", text="")
 -                self.draw_modifier_curve_common(box, modifier, False, True)
++                box.prop(modifier, "material_attribute", text="Material Attribute")
 +                draw_modifier_curve_common(box, modifier, False, True)
  
              elif modifier.type == 'CALLIGRAPHY':
                  box.prop(modifier, "orientation")
-@@ -490,7 +1038,7 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
-                 row.prop(modifier, "thickness_max")
+-                row = box.row(align=True)
+-                row.prop(modifier, "thickness_min")
+-                row.prop(modifier, "thickness_max")
++                subcol = box.column(align=True)
++                subcol.prop(modifier, "thickness_min", text="Thickness Min")
++                subcol.prop(modifier, "thickness_max", text="Max")
  
              elif modifier.type == 'TANGENT':
 -                self.draw_modifier_curve_common(box, modifier, False, False)
-+                draw_modifier_curve_common(box, modifier, False, False)
                  self.mapping = 'CURVE'
-                 row = box.row(align=True)
-                 row.prop(modifier, "thickness_min")
-@@ -505,7 +1053,7 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
-                 row.prop(modifier, "use_asymmetric")
+-                row = box.row(align=True)
+-                row.prop(modifier, "thickness_min")
+-                row.prop(modifier, "thickness_max")
++                subcol = box.column(align=True)
++                subcol.prop(modifier, "thickness_min", text="Thickness Min")
++                subcol.prop(modifier, "thickness_max", text="Max")
++
++                draw_modifier_curve_common(box, modifier, False, False)
+ 
+             elif modifier.type == 'NOISE':
+-                row = box.row(align=False)
+-                row.prop(modifier, "amplitude")
+-                row.prop(modifier, "period")
+-                row = box.row(align=False)
+-                row.prop(modifier, "seed")
+-                row.prop(modifier, "use_asymmetric")
++                col = box.column(align=True)
++                col.prop(modifier, "amplitude")
++                col.prop(modifier, "period")
++
++                col = box.column(align=True)
++                col.prop(modifier, "seed")
++                col.prop(modifier, "use_asymmetric")
  
              elif modifier.type == 'CREASE_ANGLE':
 -                self.draw_modifier_curve_common(box, modifier, False, False)
+-                row = box.row(align=True)
+-                row.prop(modifier, "thickness_min")
+-                row.prop(modifier, "thickness_max")
+-                row = box.row(align=True)
+-                row.prop(modifier, "angle_min")
+-                row.prop(modifier, "angle_max")
++                col = box.column(align=True)
++                col.prop(modifier, "thickness_min", text="Thickness Min")
++                col.prop(modifier, "thickness_max", text="Max")
++
++                col = box.column(align=True)
++                col.prop(modifier, "angle_min", text="Angle Min")
++                col.prop(modifier, "angle_max", text="Max")
++
 +                draw_modifier_curve_common(box, modifier, False, False)
-                 row = box.row(align=True)
-                 row.prop(modifier, "thickness_min")
-                 row.prop(modifier, "thickness_max")
-@@ -514,7 +1062,7 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
-                 row.prop(modifier, "angle_max")
  
              elif modifier.type == 'CURVATURE_3D':
 -                self.draw_modifier_curve_common(box, modifier, False, False)
+-                row = box.row(align=True)
+-                row.prop(modifier, "thickness_min")
+-                row.prop(modifier, "thickness_max")
+-                row = box.row(align=True)
+-                row.prop(modifier, "curvature_min")
+-                row.prop(modifier, "curvature_max")
++                subcol = box.column(align=True)
++                subcol.prop(modifier, "thickness_min", text="Thickness Min")
++                subcol.prop(modifier, "thickness_max", text="Max")
++
++                subcol = box.column(align=True)
++                subcol.prop(modifier, "curvature_min")
++                subcol.prop(modifier, "curvature_max")
++
 +                draw_modifier_curve_common(box, modifier, False, False)
-                 row = box.row(align=True)
-                 row.prop(modifier, "thickness_min")
-                 row.prop(modifier, "thickness_max")
-@@ -524,13 +1072,60 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
++
                  freestyle = context.view_layer.freestyle_settings
                  if not freestyle.use_smoothness:
                      message = "Enable Face Smoothness to use this modifier"
@@ -1358,9 +1181,9 @@ index fd12747e2fa..9357e74ff2b 100644
 +            return
 +
 +        row = layout.row(align=True)
-+        row.alignment = "LEFT"
-+        row.label(text=lineset.name, icon="LINE_DATA")
-+        row.label(text="", icon="SMALL_TRI_RIGHT_VEC")
++        row.alignment = 'LEFT'
++        row.label(text=lineset.name, icon='LINE_DATA')
++        row.label(text="", icon='SMALL_TRI_RIGHT_VEC')
 +        row.label(text=linestyle.name)
 +
 +        col = layout.column()
@@ -1376,15 +1199,13 @@ index fd12747e2fa..9357e74ff2b 100644
 +            row.prop(linestyle, "thickness_ratio")
 +
 +        col = layout.column()
-+        col.label(text="Modifiers:")
-+        col.operator_menu_enum(
-+            "scene.freestyle_thickness_modifier_add", "type", text="Add Modifier")
++        col.operator_menu_enum("scene.freestyle_thickness_modifier_add", "type", text="Add Modifier")
 +        for modifier in linestyle.thickness_modifiers:
 +            self.draw_thickness_modifier(context, modifier)
 +
 +
 +class VIEWLAYER_PT_freestyle_linestyle_geometry(ViewLayerFreestyleLineStyle, Panel):
-+    bl_label = "Freestyle Line Style: Geometry"
++    bl_label = "Freestyle Geometry"
 +    bl_options = {'DEFAULT_CLOSED'}
  
      def draw_geometry_modifier(self, _context, modifier):
@@ -1396,7 +1217,112 @@ index fd12747e2fa..9357e74ff2b 100644
          if modifier.expanded:
              box = col.box()
  
-@@ -628,6 +1223,8 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
+@@ -541,40 +1076,40 @@
+                 box.prop(modifier, "error")
+ 
+             elif modifier.type == 'SINUS_DISPLACEMENT':
+-                split = box.split()
+-                col = split.column()
++                col = box.column(align=True)
+                 col.prop(modifier, "wavelength")
+                 col.prop(modifier, "amplitude")
+-                col = split.column()
++
++                col = box.column(align=True)
+                 col.prop(modifier, "phase")
+ 
+             elif modifier.type == 'SPATIAL_NOISE':
+-                split = box.split()
+-                col = split.column()
++                col = box.column(align=True)
+                 col.prop(modifier, "amplitude")
+                 col.prop(modifier, "scale")
+                 col.prop(modifier, "octaves")
+-                col = split.column()
++
++                col = box.column(align=True)
+                 col.prop(modifier, "smooth")
+                 col.prop(modifier, "use_pure_random")
+ 
+             elif modifier.type == 'PERLIN_NOISE_1D':
+-                split = box.split()
+-                col = split.column()
++                col = box.column(align=True)
+                 col.prop(modifier, "frequency")
+                 col.prop(modifier, "amplitude")
+                 col.prop(modifier, "seed")
+-                col = split.column()
++
++                col = box.column(align=True)
+                 col.prop(modifier, "octaves")
+                 col.prop(modifier, "angle")
+ 
+             elif modifier.type == 'PERLIN_NOISE_2D':
+-                split = box.split()
+-                col = split.column()
++                col = box.column(align=True)
+                 col.prop(modifier, "frequency")
+                 col.prop(modifier, "amplitude")
+                 col.prop(modifier, "seed")
+-                col = split.column()
++
++                col = box.column(align=True)
+                 col.prop(modifier, "octaves")
+                 col.prop(modifier, "angle")
+ 
+@@ -594,33 +1129,34 @@
+                 row = box.row()
+                 row.prop(modifier, "shape", expand=True)
+                 box.prop(modifier, "rounds")
+-                row = box.row()
++                subcol = box.column(align=True)
+                 if modifier.shape in {'CIRCLES', 'ELLIPSES'}:
+-                    row.prop(modifier, "random_radius")
+-                    row.prop(modifier, "random_center")
++                    subcol.prop(modifier, "random_radius", text="Random Radius")
++                    subcol.prop(modifier, "random_center", text="Center")
+                 elif modifier.shape == 'SQUARES':
+-                    row.prop(modifier, "backbone_length")
+-                    row.prop(modifier, "random_backbone")
++                    subcol.prop(modifier, "backbone_length", text="Backbone Length")
++                    subcol.prop(modifier, "random_backbone", text="Randomness")
+ 
+             elif modifier.type == '2D_OFFSET':
+-                row = box.row(align=True)
+-                row.prop(modifier, "start")
+-                row.prop(modifier, "end")
+-                row = box.row(align=True)
+-                row.prop(modifier, "x")
+-                row.prop(modifier, "y")
++                subcol = box.column(align=True)
++                subcol.prop(modifier, "start")
++                subcol.prop(modifier, "end")
++
++                subcol = box.column(align=True)
++                subcol.prop(modifier, "x")
++                subcol.prop(modifier, "y")
+ 
+             elif modifier.type == '2D_TRANSFORM':
+                 box.prop(modifier, "pivot")
+                 if modifier.pivot == 'PARAM':
+                     box.prop(modifier, "pivot_u")
+                 elif modifier.pivot == 'ABSOLUTE':
+-                    row = box.row(align=True)
+-                    row.prop(modifier, "pivot_x")
+-                    row.prop(modifier, "pivot_y")
+-                row = box.row(align=True)
+-                row.prop(modifier, "scale_x")
+-                row.prop(modifier, "scale_y")
++                    subcol = box.column(align=True)
++                    subcol.prop(modifier, "pivot_x", text="Pivot X")
++                    subcol.prop(modifier, "pivot_y", text="Y")
++                subcol = box.column(align=True)
++                subcol.prop(modifier, "scale_x", text="Scale X")
++                subcol.prop(modifier, "scale_y", text="Y")
+                 box.prop(modifier, "angle")
+ 
+             elif modifier.type == 'SIMPLIFICATION':
+@@ -628,6 +1164,8 @@
  
      def draw(self, context):
          layout = self.layout
@@ -1405,7 +1331,7 @@ index fd12747e2fa..9357e74ff2b 100644
  
          view_layer = context.view_layer
          lineset = view_layer.freestyle_settings.linesets.active
-@@ -638,177 +1235,60 @@ class VIEWLAYER_PT_freestyle_linestyle(ViewLayerFreestyleEditorButtonsPanel, Pan
+@@ -638,181 +1176,61 @@
              return
          linestyle = lineset.linestyle
  
@@ -1479,11 +1405,7 @@ index fd12747e2fa..9357e74ff2b 100644
 -            sub.prop(linestyle, "integration_type", text="")
 -            row = col.row(align=True)
 -            row.prop(linestyle, "sort_order", expand=True)
-+        row.alignment = "LEFT"
-+        row.label(text=lineset.name, icon="LINE_DATA")
-+        row.label(text="", icon="SMALL_TRI_RIGHT_VEC")
-+        row.label(text=linestyle.name)
- 
+-
 -            # Selection
 -            layout.label(text="Selection:")
 -            split = layout.split(align=True)
@@ -1560,33 +1482,28 @@ index fd12747e2fa..9357e74ff2b 100644
 -            col.operator_menu_enum("scene.freestyle_thickness_modifier_add", "type", text="Add Modifier")
 -            for modifier in linestyle.thickness_modifiers:
 -                self.draw_thickness_modifier(context, modifier)
-+        col = layout.column()
-+        col.label(text="Modifiers:")
-+        col.operator_menu_enum(
-+            "scene.freestyle_geometry_modifier_add", "type", text="Add Modifier")
-+        for modifier in linestyle.geometry_modifiers:
-+            self.draw_geometry_modifier(context, modifier)
- 
+-
 -        elif linestyle.panel == 'GEOMETRY':
 -            col = layout.column()
 -            col.label(text="Modifiers:")
 -            col.operator_menu_enum("scene.freestyle_geometry_modifier_add", "type", text="Add Modifier")
 -            for modifier in linestyle.geometry_modifiers:
 -                self.draw_geometry_modifier(context, modifier)
- 
+-
 -        elif linestyle.panel == 'TEXTURE':
 -            layout.separator()
-+class VIEWLAYER_PT_freestyle_linestyle_texture(ViewLayerFreestyleLineStyle, Panel):
-+    bl_label = "Freestyle Line Style: Texture"
-+    bl_options = {'DEFAULT_CLOSED'}
++        row.alignment = 'LEFT'
++        row.label(text=lineset.name, icon='LINE_DATA')
++        row.label(text="", icon='SMALL_TRI_RIGHT_VEC')
++        row.label(text=linestyle.name)
  
 -            row = layout.row()
 -            row.prop(linestyle, "use_nodes")
 -            row.prop(linestyle, "texture_spacing", text="Spacing Along Stroke")
-+    def draw(self, context):
-+        layout = self.layout
-+        layout.use_property_split = True
-+        layout.use_property_decorate = False
++        col = layout.column()
++        col.operator_menu_enum("scene.freestyle_geometry_modifier_add", "type", text="Add Modifier")
++        for modifier in linestyle.geometry_modifiers:
++            self.draw_geometry_modifier(context, modifier)
  
 -            row = layout.row()
 -            props = row.operator(
@@ -1595,13 +1512,24 @@ index fd12747e2fa..9357e74ff2b 100644
 -                icon='TEXTURE',
 -            )
 -            props.context = 'TEXTURE'
-+        view_layer = context.view_layer
-+        lineset = view_layer.freestyle_settings.linesets.active
  
 -        elif linestyle.panel == 'MISC':
 -            pass
-+        layout.active = view_layer.use_freestyle
++class VIEWLAYER_PT_freestyle_linestyle_texture(ViewLayerFreestyleLineStyle, Panel):
++    bl_label = "Freestyle Texture"
++    bl_options = {'DEFAULT_CLOSED'}
+ 
++    def draw(self, context):
++        layout = self.layout
++        layout.use_property_split = True
++        layout.use_property_decorate = False
+ 
+-# Material properties
++        view_layer = context.view_layer
++        lineset = view_layer.freestyle_settings.linesets.active
 +
++        layout.active = view_layer.use_freestyle
+ 
 +        if lineset is None:
 +            return
 +        linestyle = lineset.linestyle
@@ -1610,9 +1538,9 @@ index fd12747e2fa..9357e74ff2b 100644
 +            return
 +
 +        row = layout.row(align=True)
-+        row.alignment = "LEFT"
-+        row.label(text=lineset.name, icon="LINE_DATA")
-+        row.label(text="", icon="SMALL_TRI_RIGHT_VEC")
++        row.alignment = 'LEFT'
++        row.label(text=lineset.name, icon='LINE_DATA')
++        row.label(text="", icon='SMALL_TRI_RIGHT_VEC')
 +        row.label(text=linestyle.name)
 +
 +        layout.prop(linestyle, "use_nodes")
@@ -1625,24 +1553,38 @@ index fd12747e2fa..9357e74ff2b 100644
 +            icon='TEXTURE',
 +        )
 +        props.context = 'TEXTURE'
++
++
++# Material properties
+ class MaterialFreestyleButtonsPanel:
+     bl_space_type = 'PROPERTIES'
+     bl_region_type = 'WINDOW'
+@@ -825,8 +1243,11 @@
+         material = context.material
+         with_freestyle = bpy.app.build_options.freestyle
+         return (
+-            with_freestyle and material and scene and scene.render.use_freestyle and
+-            (context.engine in cls.COMPAT_ENGINES)
++            with_freestyle
++            and material
++            and scene
++            and scene.render.use_freestyle
++            and (context.engine in cls.COMPAT_ENGINES)
+         )
  
  
- # Material properties
-@@ -846,12 +1326,29 @@ class MATERIAL_PT_freestyle_line(MaterialFreestyleButtonsPanel, Panel):
- 
- 
- classes = (
-+    VIEWLAYER_PT_linestyle_presets,
-     RENDER_PT_freestyle,
+@@ -850,12 +1271,30 @@
      VIEWLAYER_UL_linesets,
      RENDER_MT_lineset_context_menu,
      VIEWLAYER_PT_freestyle,
++    VIEWLAYER_PT_freestyle_edge_detection_options,
++    VIEWLAYER_PT_freestyle_style_modules,
      VIEWLAYER_PT_freestyle_lineset,
+-    VIEWLAYER_PT_freestyle_linestyle,
 +    VIEWLAYER_PT_freestyle_lineset_visibilty,
-+    VIEWLAYER_PT_freestyle_lineset_edgetypes,
++    VIEWLAYER_PT_freestyle_lineset_edgetype,
 +    VIEWLAYER_PT_freestyle_lineset_facemarks,
 +    VIEWLAYER_PT_freestyle_lineset_collection,
-     VIEWLAYER_PT_freestyle_linestyle,
 +    VIEWLAYER_PT_freestyle_linestyle_strokes,
 +    VIEWLAYER_PT_freestyle_linestyle_strokes_chaining,
 +    VIEWLAYER_PT_freestyle_linestyle_strokes_splitting,
@@ -1658,11 +1600,86 @@ index fd12747e2fa..9357e74ff2b 100644
      MATERIAL_PT_freestyle_line,
  )
  
+ if __name__ == "__main__":  # only for live edit.
+     from bpy.utils import register_class
++
+     for cls in classes:
+         register_class(cls)
+diff --git a/source/blender/freestyle/intern/application/AppConfig.h b/source/blender/freestyle/intern/application/AppConfig.h
+--- a/source/blender/freestyle/intern/application/AppConfig.h
++++ b/source/blender/freestyle/intern/application/AppConfig.h
+@@ -115,10 +115,6 @@
+ static const string OPTIONS_CURRENT_DIRS_FILE("current_dirs.xml");
+ static const string OPTIONS_QGLVIEWER_FILE("qglviewer.xml");
+ 
+-// Default options
+-static const real DEFAULT_SPHERE_RADIUS = 1.0;
+-static const real DEFAULT_DKR_EPSILON = 0.0;
+-
+ }  // namespace Config
+ 
+ } /* namespace Freestyle */
+diff --git a/source/blender/freestyle/intern/blender_interface/FRS_freestyle.cpp b/source/blender/freestyle/intern/blender_interface/FRS_freestyle.cpp
+--- a/source/blender/freestyle/intern/blender_interface/FRS_freestyle.cpp
++++ b/source/blender/freestyle/intern/blender_interface/FRS_freestyle.cpp
+@@ -65,9 +65,6 @@
+ 
+ extern "C" {
+ 
+-#define DEFAULT_SPHERE_RADIUS 1.0f
+-#define DEFAULT_DKR_EPSILON 0.0f
+-
+ struct FreestyleGlobals g_freestyle;
+ 
+ // Freestyle configuration
+@@ -433,14 +430,8 @@
+   }
+ 
+   // set parameters
+-  if (config->flags & FREESTYLE_ADVANCED_OPTIONS_FLAG) {
+-    controller->setSphereRadius(config->sphere_radius);
+-    controller->setSuggestiveContourKrDerivativeEpsilon(config->dkr_epsilon);
+-  }
+-  else {
+-    controller->setSphereRadius(DEFAULT_SPHERE_RADIUS);
+-    controller->setSuggestiveContourKrDerivativeEpsilon(DEFAULT_DKR_EPSILON);
+-  }
++  controller->setSphereRadius(config->sphere_radius);
++  controller->setSuggestiveContourKrDerivativeEpsilon(config->dkr_epsilon);
+   controller->setFaceSmoothness((config->flags & FREESTYLE_FACE_SMOOTHNESS_FLAG) ? true : false);
+   controller->setCreaseAngle(RAD2DEGF(config->crease_angle));
+   controller->setVisibilityAlgo((config->flags & FREESTYLE_CULLING) ?
+diff --git a/source/blender/makesdna/DNA_freestyle_types.h b/source/blender/makesdna/DNA_freestyle_types.h
+--- a/source/blender/makesdna/DNA_freestyle_types.h
++++ b/source/blender/makesdna/DNA_freestyle_types.h
+@@ -40,7 +40,7 @@
+   FREESTYLE_RIDGES_AND_VALLEYS_FLAG = 1 << 1,
+   FREESTYLE_MATERIAL_BOUNDARIES_FLAG = 1 << 2,
+   FREESTYLE_FACE_SMOOTHNESS_FLAG = 1 << 3,
+-  FREESTYLE_ADVANCED_OPTIONS_FLAG = 1 << 4,
++  /* FREESTYLE_ADVANCED_OPTIONS_FLAG = 1 << 4, */ /* UNUSED */
+   FREESTYLE_CULLING = 1 << 5,
+   FREESTYLE_VIEW_MAP_CACHE = 1 << 6,
+   FREESTYLE_AS_RENDER_PASS = 1 << 7,
 diff --git a/source/blender/makesrna/intern/rna_scene.c b/source/blender/makesrna/intern/rna_scene.c
-index 9479d15c2cc..b69270323e3 100644
 --- a/source/blender/makesrna/intern/rna_scene.c
 +++ b/source/blender/makesrna/intern/rna_scene.c
-@@ -4743,7 +4743,7 @@ void rna_def_freestyle_settings(BlenderRNA *brna)
+@@ -4597,12 +4597,12 @@
+       {FREESTYLE_CONTROL_SCRIPT_MODE,
+        "SCRIPT",
+        0,
+-       "Python Scripting Mode",
++       "Python Scripting",
+        "Advanced mode for using style modules written in Python"},
+       {FREESTYLE_CONTROL_EDITOR_MODE,
+        "EDITOR",
+        0,
+-       "Parameter Editor Mode",
++       "Parameter Editor",
+        "Basic mode for interactive style parameter editing"},
+       {0, NULL, 0, NULL, NULL},
+   };
+@@ -4613,7 +4613,7 @@
        {FREESTYLE_QI_RANGE,
         "RANGE",
         0,
@@ -1671,3 +1688,33 @@ index 9479d15c2cc..b69270323e3 100644
         "Select feature edges within a range of quantitative invisibility (QI) values"},
        {0, NULL, 0, NULL, NULL},
    };
+@@ -4930,14 +4930,6 @@
+       prop, "Face Smoothness", "Take face smoothness into account in view map calculation");
+   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
+ 
+-  prop = RNA_def_property(srna, "use_advanced_options", PROP_BOOLEAN, PROP_NONE);
+-  RNA_def_property_boolean_sdna(prop, NULL, "flags", FREESTYLE_ADVANCED_OPTIONS_FLAG);
+-  RNA_def_property_ui_text(
+-      prop,
+-      "Advanced Options",
+-      "Enable advanced edge detection options (sphere radius and Kr derivative epsilon)");
+-  RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
+-
+   prop = RNA_def_property(srna, "use_view_map_cache", PROP_BOOLEAN, PROP_NONE);
+   RNA_def_property_boolean_sdna(prop, NULL, "flags", FREESTYLE_VIEW_MAP_CACHE);
+   RNA_def_property_ui_text(
+@@ -4957,11 +4949,13 @@
+ 
+   prop = RNA_def_property(srna, "sphere_radius", PROP_FLOAT, PROP_NONE);
+   RNA_def_property_float_sdna(prop, NULL, "sphere_radius");
++  RNA_def_property_float_default(prop, 1.0);
+   RNA_def_property_range(prop, 0.0, 1000.0);
+   RNA_def_property_ui_text(prop, "Sphere Radius", "Sphere radius for computing curvatures");
+   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_freestyle_update");
+ 
+   prop = RNA_def_property(srna, "kr_derivative_epsilon", PROP_FLOAT, PROP_NONE);
++  RNA_def_property_float_default(prop, 0.0);
+   RNA_def_property_float_sdna(prop, NULL, "dkr_epsilon");
+   RNA_def_property_range(prop, -1000.0, 1000.0);
+   RNA_def_property_ui_text(
+
